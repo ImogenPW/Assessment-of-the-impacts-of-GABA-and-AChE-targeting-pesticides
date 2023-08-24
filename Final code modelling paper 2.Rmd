@@ -1,0 +1,2159 @@
+---
+title: "Chapter 3"
+author: "Imogen Poyntz-Wright"
+date: "2023-03-23"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Load libraries
+```{r}
+library(RVAideMemoire)
+library(tidyverse)
+library(ggplot2)
+library(readr)
+library(openxlsx)
+library(dplyr)
+library(MuMIn)
+library(tidyr)
+library(DHARMa)
+library(lme4)
+library(glmmTMB)
+library(factoextra)
+library(FactoMineR)
+library(corrplot)
+library(sjPlot)
+library(sjlabelled)
+library(sjmisc)
+library(MASS)
+library(AICcmodavg)
+library(car)
+library(openxlsx)
+library(dplyr)
+library(jtools)
+```
+
+#Load datasets
+```{r}
+midlandsdataMOA <-read.csv("C:/Users/imoge/OneDrive/phd/Research/Objective 4/Paper work midlands/Midlands final datasets 36 days/final dataset for species_family richness MOA2 completed_temp_flow.csv")
+anglaindataMOA <- read_csv("C:/Users/imoge/OneDrive/phd/Research/Objective 4/Paper work/FINAL DATASETS 36 days/final anglian dataset MOA complete_flow_temp.csv")
+GABA_ACHE_SITE1 <- read_csv("C:/Users/imoge/OneDrive/phd/Research/Objective 4/Paper work midlands/Midlands final datasets 36 days/53594 ACHE and GABA.csv")
+
+#Subset data MOA
+midlandsdataMOA$dates <- as.Date(midlandsdataMOA$MY.DATE1, "%m/%d/%Y") #add date as date
+midlandsdataMOA$SITE_ID<- as.character(midlandsdataMOA$SITE_ID.y) #add site id as character
+anglaindataMOA$dates <- as.Date(anglaindataMOA$MY.DATE1, "%m/%d/%Y") #add date as date
+anglaindataMOA$SITE_ID<- as.character(anglaindataMOA$SITE_ID.y) #add site id as character
+midlandsdata_50020 <- subset(midlandsdataMOA, SITE_ID.y %in% c('50020'))
+midlandsdata_50020$dates <- as.Date(midlandsdata_50020$MY.DATE1, "%m/%d/%Y") #add date as date
+midlandsdata_50020$SITE_ID<- as.character(midlandsdata_50020$SITE_ID.y) #add site id as character
+midlandsdata_53594 <- subset(midlandsdataMOA, SITE_ID.y %in% c('53594'))
+midlandsdata_53594$dates <- as.Date(midlandsdata_53594$MY.DATE1, "%m/%d/%Y") #add date as date
+midlandsdata_53594$SITE_ID<- as.character(midlandsdata_53594$SITE_ID.y) #add site id as character
+midlandsdata_53846 <- subset(midlandsdataMOA, SITE_ID %in% c('53846'))
+midlandsdata_53846$dates <- as.Date(midlandsdata_53846$MY.DATE1, "%m/%d/%Y") #add date as date
+midlandsdata_53846$SITE_ID<- as.character(midlandsdata_53846$SITE_ID.y) #add site id as character
+midlandsdata_47046 <- subset(midlandsdataMOA, SITE_ID %in% c('47046'))
+midlandsdata_47046$dates <- as.Date(midlandsdata_47046$MY.DATE1, "%m/%d/%Y") #add date as date
+midlandsdata_47046$SITE_ID<- as.character(midlandsdata_47046$SITE_ID.y) #add site id as character
+midlandsdata_47138 <- subset(midlandsdataMOA, SITE_ID %in% c('47138'))
+midlandsdata_47138$dates <- as.Date(midlandsdata_47138$MY.DATE1, "%m/%d/%Y") #add date as date
+midlandsdata_47138$SITE_ID<- as.character(midlandsdata_47138$SITE_ID.y) #add site id as character
+midlandsdata_47157 <- subset(midlandsdataMOA, SITE_ID %in% c('47157'))
+midlandsdata_47157$dates <- as.Date(midlandsdata_47157$MY.DATE1, "%m/%d/%Y") #add date as date
+midlandsdata_47157$SITE_ID<- as.character(midlandsdata_47157$SITE_ID.y) #add site id as character
+midlandsdata_47255 <- subset(midlandsdataMOA, SITE_ID %in% c('47255'))
+midlandsdata_47255$dates <- as.Date(midlandsdata_47255$MY.DATE1, "%m/%d/%Y") #add date as date
+midlandsdata_47255$SITE_ID<- as.character(midlandsdata_47255$SITE_ID.y) #add site id as character
+midlandsdata_48226 <- subset(midlandsdataMOA, SITE_ID %in% c('48226'))
+midlandsdata_48226$dates <- as.Date(midlandsdata_48226$MY.DATE1, "%m/%d/%Y") #add date as date
+midlandsdata_48226$SITE_ID<- as.character(midlandsdata_48226$SITE_ID.y) #add site id as character
+midlandsdata_49881 <- subset(midlandsdataMOA, SITE_ID.y %in% c('49881'))
+midlandsdata_49881$dates <- as.Date(midlandsdata_49881$MY.DATE1, "%m/%d/%Y") #add date as date
+midlandsdata_49881$SITE_ID<- as.character(midlandsdata_49881$SITE_ID.y) #add site id as character
+midlandsdata_50031 <- subset(midlandsdataMOA, SITE_ID %in% c('50031'))
+midlandsdata_50031$dates <- as.Date(midlandsdata_50031$MY.DATE1, "%m/%d/%Y") #add date as date
+midlandsdata_50031$SITE_ID<- as.character(midlandsdata_50031$SITE_ID.y) #add site id as character 
+midlandsdata_50139 <- subset(midlandsdataMOA, SITE_ID %in% c('50139'))
+midlandsdata_50139$dates <- as.Date(midlandsdata_50139$MY.DATE1, "%m/%d/%Y") #add date as date
+midlandsdata_50139$SITE_ID<- as.character(midlandsdata_50139$SITE_ID.y) #add site id as character 
+midlandsdata_50257 <- subset(midlandsdataMOA, SITE_ID %in% c('50257'))
+midlandsdata_50257$dates <- as.Date(midlandsdata_50257$MY.DATE1, "%m/%d/%Y") #add date as date
+midlandsdata_50257$SITE_ID<- as.character(midlandsdata_50257$SITE_ID.y) #add site id as character
+midlandsdata_50440 <- subset(midlandsdataMOA, SITE_ID %in% c('50440'))
+midlandsdata_50440$dates <- as.Date(midlandsdata_50440$MY.DATE1, "%m/%d/%Y") #add date as date
+midlandsdata_50440$SITE_ID<- as.character(midlandsdata_50440$SITE_ID.y) #add site id as character
+midlandsdata_51097 <- subset(midlandsdataMOA, SITE_ID %in% c('51097'))
+midlandsdata_51097$dates <- as.Date(midlandsdata_51097$MY.DATE1, "%m/%d/%Y") #add date as date
+midlandsdata_51097$SITE_ID<- as.character(midlandsdata_51097$SITE_ID.y) #add site id as character
+midlandsdata_51357 <- subset(midlandsdataMOA, SITE_ID %in% c('51357'))
+midlandsdata_51357$dates <- as.Date(midlandsdata_51357$MY.DATE1, "%m/%d/%Y") #add date as date
+midlandsdata_51357$SITE_ID<- as.character(midlandsdata_51357$SITE_ID.y) #add site id as character
+anglaindata_55006 <- subset(anglaindataMOA, SITE_ID %in% c('55006'))
+anglaindata_55006$dates <- as.Date(anglaindata_55006$MY.DATE1, "%m/%d/%Y") #add date as date
+anglaindata_55006$SITE_ID<- as.character(anglaindata_55006$SITE_ID.y) #add site id as character
+anglaindata_55088 <- subset(anglaindataMOA, SITE_ID %in% c('55088'))
+anglaindata_55088$dates <- as.Date(anglaindata_55088$MY.DATE1, "%m/%d/%Y") #add date as date
+anglaindata_55088$SITE_ID<- as.character(anglaindata_55088$SITE_ID.y) #add site id as character
+anglaindata_55311 <- subset(anglaindataMOA, SITE_ID %in% c('55311'))
+anglaindata_55311$dates <- as.Date(anglaindata_55311$MY.DATE1, "%m/%d/%Y") #add date as date
+anglaindata_55311$SITE_ID<- as.character(anglaindata_55311$SITE_ID.y) #add site id as character
+anglaindata_55350 <- subset(anglaindataMOA, SITE_ID %in% c('55350'))
+anglaindata_55350$dates <- as.Date(anglaindata_55350$MY.DATE1, "%m/%d/%Y") #add date as date
+anglaindata_55350$SITE_ID<- as.character(anglaindata_55350$SITE_ID.y) #add site id as character
+anglaindata_55436 <- subset(anglaindataMOA, SITE_ID %in% c('55436'))
+anglaindata_55436$dates <- as.Date(anglaindata_55436$MY.DATE1, "%m/%d/%Y") #add date as date
+anglaindata_55436$SITE_ID<- as.character(anglaindata_55436$SITE_ID.y) #add site id as character
+anglaindata_55566 <- subset(anglaindataMOA, SITE_ID %in% c('55566'))
+anglaindata_55566$dates <- as.Date(anglaindata_55566$MY.DATE1, "%m/%d/%Y") #add date as date
+anglaindata_55566$SITE_ID<- as.character(anglaindata_55566$SITE_ID.y) #add site id as character
+anglaindata_55833a <- subset(anglaindataMOA, SITE_ID.y %in% c('55833'))
+anglaindata_55833a$dates <- as.Date(anglaindata_55833a$MY.DATE1, "%m/%d/%Y") #add date as date
+anglaindata_55833a$SITE_ID<- as.character(anglaindata_55833a$SITE_ID.y) #add site id as character
+
+fam_spp <- read_csv("C:/Users/imoge/OneDrive/phd/Research/Objective 4/All families and species.csv")
+
+GABA_53594_acute <- read.csv("C:/Users/imoge/OneDrive/phd/Research/Objective 4/Paper work midlands/Midlands final datasets 36 days/53594 ACHE acute subgroup.csv")
+GABA_53594_acute2 <- read.csv("C:/Users/imoge/OneDrive/phd/Research/Objective 4/Paper work midlands/Midlands final datasets 36 days/53594 GABA ACUTE FIELD.csv")
+GABA_53594_chronic <- read.csv("C:/Users/imoge/OneDrive/phd/Research/Objective 4/Paper work midlands/Midlands final datasets 36 days/53594 ACHE chronic subgroup.csv")
+GABA_53594_chronic2 <- read.csv("C:/Users/imoge/OneDrive/phd/Research/Objective 4/Paper work midlands/Midlands final datasets 36 days/53594 GABA chronic.csv")
+
+```
+
+#Site 1 - 53594
+Testing ACHE and GABA on family richness
+
+##AChE pesticides
+```{r}
+
+##Process data for PCA analysis
+pca_data<- subset(midlandsdata_53594, select = c( 5, 10,13, 29, 16,17, 21, 20, 25, 27, 40))
+midpca_data_53594_sodium<- subset(pca_data, select = c( 4:11))
+pca_data1 <- midpca_data_53594_sodium %>% drop_na() 
+pca_dataa <- pca_data %>% drop_na() 
+
+##Run PCA analysis
+
+###Normalised data
+midpca_data_53594_all.data_normalized <- scale(pca_data1)
+midpca_data_53594_all.pca1 <- prcomp(midpca_data_53594_all.data_normalized, center=TRUE, scale.=TRUE)
+fviz_pca_var(midpca_data_53594_all.pca1,axes = c(1, 3))
+pcs <- as.data.frame(midpca_data_53594_all.pca1$x)    
+###model data
+angres.pca <- PCA(midpca_data_53594_all.data_normalized, graph = FALSE)
+print(angres.pca)
+###retrieve data
+var <- get_pca_var(angres.pca)
+###Correlation plot
+fviz_pca_var(angres.pca, col.var = "black")
+corrplot(var$cos2, is.corr=FALSE)
+#ggsave(P1, file="Contribution table of variables across all PCAs.png")
+### Total cos2 of variables on Dim.1 and Dim.2
+angplot1pca<- fviz_cos2(angres.pca, choice = "var", axes = 1:2)
+### Color by cos2 values: quality on the factor map
+angplot2pca<- fviz_pca_var(angres.pca, col.var = "cos2",
+                           gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"), 
+                           repel = TRUE) # Avoid text overlapping
+                           ###Contributions of variables to PCs
+                           corrplot(var$contrib, is.corr=FALSE)
+                           ### Contributions of variables to PC1
+                           angpca1 <- fviz_contrib(angres.pca, choice = "var", axes = 1, top = 10)
+                           angpca1a <- angpca1 +theme(axis.text=element_text(size=12),
+                                                      axis.title=element_text(size=14,face="bold"))  
+                             ggtitle("Contibution of varibales to PC1 AChE") + theme(axis.text.x = element_text(angle = 90, vjust = 0.5,))
+                           ### Contributions of variables to PC2
+                           angpca2 <- fviz_contrib(angres.pca, choice = "var", axes = 2, top = 10)
+                           angpca2a <- angpca2 +theme(axis.text=element_text(size=12, angle = 90,),
+                                                      axis.title=element_text(size=14,face="bold"))  
+                             ggtitle("Contibution of varibales to PC2 AChE") + theme(axis.text.x = element_text(angle = 90, vjust = 0.5,))
+                           ### Contributions of variables to PC3
+                           angpca2 <- fviz_contrib(angres.pca, choice = "var", axes = 3, top = 10)
+                           angpca2a <- angpca2 +theme(axis.text=element_text(size=12, angle = 90,),
+                                                      axis.title=element_text(size=14,face="bold")) 
+                             ggtitle("Contibution of varibales to PC3 AChE") + theme(axis.text.x = element_text(angle = 90, vjust = 0.5,))
+                           ###The total contribution to PC1 and PC2 
+                           fviz_contrib(angres.pca, choice = "var", axes = 1:2, top = 10)
+                           ###highlighting most important values
+                           angplot3pca<- fviz_pca_var(angres.pca, col.var = "contrib",
+                                                      gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
+                          
+#RUN GLM Analaysis - poisson distribution (count data)
+
+###Process data
+PCA_53593_ACHE <- cbind(pca_dataa, pcs) #add PC to dataset       
+PCA_53593_ACHE1 <- transform(PCA_53593_ACHE, day_in_year_cs = scale(day_in_year), pc1_cs = scale(PC1), pc2_cs= scale(PC2)) ###transfrom
+                           
+###Run entire model
+PCA_53593_ACHE1_MODEL <- glm(distinct_families ~  PC1 + PC2 + PC3 +  day_in_year + YEAR, family = ("poisson"), data=PCA_53593_ACHE1)
+summary(PCA_53593_ACHE1_MODEL) 
+
+###Model selection
+options(na.action = "na.fail")
+dredge1 <- dredge(PCA_53593_ACHE1_MODEL, rank = "AIC")
+#write.table(dredge1, file = "AICc 53593 ACHE.txt", sep = ",")
+
+###Run selected model - after AICc selection (accounting for all 3 PCs = 80% variance)
+PCA_53593_ACHE1_MODEL_2 <- glm(distinct_families ~  PC1 + PC2 + PC3 +  YEAR, family = ("poisson"), data=PCA_53593_ACHE1)
+summary(PCA_53593_ACHE1_MODEL_2) 
+
+PCA_53593_ACHE1_MODEL_2 <- glm(distinct_families ~  PC1 +  day_in_year, family = ("poisson"), data=PCA_53593_ACHE1)
+summary(PCA_53593_ACHE1_MODEL_2) 
+summ(PCA_53593_ACHE1_MODEL_2, confint = TRUE, digits = 3)
+
+###test model for overdispersion
+testDispersion(PCA_53593_ACHE1_MODEL_2)
+simPCA_53593_ACHE1_MODEL_2_Fam<- simulateResiduals(PCA_53593_ACHE1_MODEL_2, refit=T)
+testOverdispersion(simPCA_53593_ACHE1_MODEL_2_Fam)
+plot(simPCA_53593_ACHE1_MODEL_2_Fam)
+
+```
+
+##GABA pesticides
+```{r}
+##Process data for PCA analysis
+pca_data<- subset(midlandsdata_53594, select = c( 5, 10,13, 33, 16,17, 20, 25,27, 40))
+midpca_data_53594_sodium<- subset(pca_data, select = c( 4:10))
+pca_data1 <- midpca_data_53594_sodium %>% drop_na() 
+pca_dataa <- pca_data %>% drop_na() 
+
+##Run PCA analysis
+
+###Normalised data
+midpca_data_53594_all.data_normalized <- scale(pca_data1)
+midpca_data_53594_all.pca1 <- prcomp(midpca_data_53594_all.data_normalized, center=TRUE, scale.=TRUE)
+fviz_pca_var(midpca_data_53594_all.pca1,axes = c(1, 3))
+pcs <- as.data.frame(midpca_data_53594_all.pca1$x)    
+###model data
+angres.pca <- PCA(midpca_data_53594_all.data_normalized, graph = FALSE)
+print(angres.pca)
+###retrieve data
+var <- get_pca_var(angres.pca)
+###Correlation plot
+fviz_pca_var(angres.pca, col.var = "black")
+corrplot(var$cos2, is.corr=FALSE)
+### Total cos2 of variables on Dim.1 and Dim.2
+angplot1pca<- fviz_cos2(angres.pca, choice = "var", axes = 1:2)
+### Color by cos2 values: quality on the factor map
+angplot2pca<- fviz_pca_var(angres.pca, col.var = "cos2",
+                           gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"), 
+                           repel = TRUE) # Avoid text overlapping)
+                           ###Contributions of variables to PCs
+                           corrplot(var$contrib, is.corr=FALSE)  
+                           ### Contributions of variables to PC1
+                           angpca1 <- fviz_contrib(angres.pca, choice = "var", axes = 1, top = 10)
+                           angpca1a <- angpca1 +theme(axis.text=element_text(size=12),
+                                                      axis.title=element_text(size=14,face="bold"))  +
+                             scale_x_discrete(labels=c("Ammoniacal Nitrogen", "Ammonia",  "pH", "BOD","Orthophosphate", "Temperature", "GABA pesticide")) +
+                             ggtitle("Contibution of varibales to PC1") + theme(axis.text.x = element_text(angle = 90, vjust = 0.5,))
+                           ### Contributions of variables to PC2
+                           angpca2 <- fviz_contrib(angres.pca, choice = "var", axes = 2, top = 10)
+                           angpca2a <- angpca2 +theme(axis.text=element_text(size=12, angle = 90,),
+                                                      axis.title=element_text(size=14,face="bold"))  +
+                             scale_x_discrete(labels=c("Orthophosphate", "BOD", "pH","Temperature", "GABA pesticide", "Ammonia", "Ammoniacal Nitrogen")) +
+                             ggtitle("Contibution of varibales to PC2") + theme(axis.text.x = element_text(angle = 90, vjust = 0.5,))
+                           ### Contributions of variables to PC3
+                           angpca2 <- fviz_contrib(angres.pca, choice = "var", axes = 3, top = 10)
+                           angpca2a <- angpca2 +theme(axis.text=element_text(size=12, angle = 90,),
+                                                      axis.title=element_text(size=14,face="bold"))  +
+                             scale_x_discrete(labels=c("GABA pesticide", "Temperature", "Ammonia","BOD", "pH", "Orthophosphate", "Ammoniacal Nitrogen")) +
+                             ggtitle("Contibution of varibales to PC3") + theme(axis.text.x = element_text(angle = 90, vjust = 0.5,))
+                           ###The total contribution to PC1 and PC2 
+                           fviz_contrib(angres.pca, choice = "var", axes = 1:2, top = 10)
+                           ###highlighting most important values
+                           angplot3pca<- fviz_pca_var(angres.pca, col.var = "contrib",
+                                                      gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
+                          
+#RUN GLM Analaysis - poisson distribution (count data)
+
+###Process data
+PCA_53593_GABA <- cbind(pca_dataa, pcs) #add PC to dataset   
+PCA_53593_GABA_1 <- transform(PCA_53593_GABA, day_in_year_cs = scale(day_in_year), pc1_cs = scale(PC1), pc2_cs= scale(PC2)) ###transfrom
+                           
+###Run entire model
+PCA_53593_GABA_1_MODEL <- glm(distinct_families ~  PC1 + PC2 + PC3 +  day_in_year + YEAR, family = ("poisson"), data=PCA_53593_GABA_1)
+summary(PCA_53593_GABA_1_MODEL) 
+
+###Model selection
+options(na.action = "na.fail")
+dredge1 <- dredge(PCA_53593_GABA_1_MODEL, rank = "AIC")
+#write.table(dredge1, file = "AICc 53593 GABA.txt", sep = ",")
+
+###Run selected model - after AICc selection (accounting for all 3 PCs = 80% variance)
+PCA_53593_GABA1_MODEL_2 <- glm(distinct_families ~  PC1 + PC2 + PC3 +  day_in_year, family = ("poisson"), data=PCA_53593_GABA_1)
+summary(PCA_53593_GABA1_MODEL_2) 
+PCA_53593_GABA1_MODEL_2 <- glm(distinct_families ~ PC3 +  day_in_year +YEAR , family = ("poisson"), data=PCA_53593_GABA_1)
+summary(PCA_53593_GABA1_MODEL_2) 
+summ(PCA_53593_GABA1_MODEL_2, confint = TRUE, digits = 3)
+
+###test model for overdispersion
+testDispersion(PCA_53593_GABA1_MODEL_2)
+simPCA_53593_GABA1_MODEL_2_FAM<- simulateResiduals(PCA_53593_GABA1_MODEL_2, refit=T)
+testOverdispersion(simPCA_53593_GABA1_MODEL_2_FAM)
+plot(simPCA_53593_GABA1_MODEL_2_FAM)
+
+
+```
+
+#Site 2 - 50020
+##AChE
+```{r}
+##process data
+pca_data<- subset(midlandsdata_50020, select = c( 29, 16:17, 19:21, 27))
+midpca_data_50020_all <- pca_data %>% drop_na() 
+
+##run PCA analysis
+#Normalised data
+midpca_data_50020_all.data_normalized <- scale(midpca_data_50020_all)
+midpca_data_50020_all.pca1 <- prcomp(midpca_data_50020_all.data_normalized, center=TRUE, scale.=TRUE)
+fviz_pca_var(midpca_data_50020_all.pca1,axes = c(1, 3))
+pcs <- as.data.frame(midpca_data_50020_all.pca1$x)
+#model data
+angres.pca <- PCA(midpca_data_50020_all.data_normalized, graph = FALSE)
+print(angres.pca)
+#retrieve data
+var <- get_pca_var(angres.pca)
+###Correlation plot
+fviz_pca_var(angres.pca, col.var = "black")
+corrplot(var$cos2, is.corr=FALSE)
+### Total cos2 of variables on Dim.1 and Dim.2
+angplot1pca<- fviz_cos2(angres.pca, choice = "var", axes = 1:2)
+### Color by cos2 values: quality on the factor map
+angplot2pca<- fviz_pca_var(angres.pca, col.var = "cos2",
+                           gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"), 
+                           repel = TRUE) # Avoid text overlapping)
+###Contributions of variables to PCs
+corrplot(var$contrib, is.corr=FALSE)  
+### Contributions of variables to PC1
+angpca1 <- fviz_contrib(angres.pca, choice = "var", axes = 1, top = 10)
+### Contributions of variables to PC2
+angpca2 <- fviz_contrib(angres.pca, choice = "var", axes = 2, top = 10)
+
+angpca2 <- fviz_contrib(angres.pca, choice = "var", axes = 3, top = 10)
+
+angpca2 <- fviz_contrib(angres.pca, choice = "var", axes = 4, top = 10)
+
+###The total contribution to PC1 and PC2 
+fviz_contrib(angres.pca, choice = "var", axes = 1:2, top = 10)
+###highlighting most important values
+angplot3pca<- fviz_pca_var(angres.pca, col.var = "contrib",
+                           gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
+
+##PCA model for test
+pca_data<- subset(midlandsdata_50020, select = c(5, 10,13, 29, 16:17, 19:21, 27, 28, 39, 40,41,42))
+pca_data1 <- pca_data %>% drop_na()
+pca_data_3<- subset(pca_data1, select = c(1,2,3, 11, 14, 15))
+PCA_50020_all <- cbind(pca_data_3, pcs)
+p1<- ggplot(pca_data1, aes(x = AChE, y = distinct_families)) +geom_point() +geom_smooth(method = "lm", se= FALSE)
+
+###Scale other variables
+datmidland_50020_ACHE_CS <- transform(PCA_50020_all, dates_cs=scale(dates), day_in_year_cs = scale(day_in_year))
+
+###run modeL ENTIRE
+datmidland_50020_ACHE_all_fam <- glm(distinct_families ~  PC1 + PC2 + PC3 +  day_in_year_cs + YEAR, family =("poisson"), data=datmidland_50020_ACHE_CS)
+summary(datmidland_50020_ACHE_all_fam) 
+
+###Model selection
+options(na.action = "na.fail")
+dredge1 <- dredge(datmidland_50020_ACHE_all_fam, rank = "AIC")
+#write.table(dredge1, file = "AICc 53593 GABA.txt", sep = ",")
+
+datmidland_50020_ACHE_all_fam <- glm(distinct_families ~ YEAR, family =("poisson"), data=datmidland_50020_ACHE_CS)
+summary(datmidland_50020_ACHE_all_fam) 
+
+#Null model better than PCA (80%)
+
+```
+##GABA
+
+```{r}
+##process data
+pca_data<- subset(midlandsdata_50020, select = c( 33, 16:17, 19:21, 27))
+midpca_data_50020_all <- pca_data %>% drop_na() 
+
+##run PCA analysis
+#Normalised data
+midpca_data_50020_all.data_normalized <- scale(midpca_data_50020_all)
+midpca_data_50020_all.pca1 <- prcomp(midpca_data_50020_all.data_normalized, center=TRUE, scale.=TRUE)
+fviz_pca_var(midpca_data_50020_all.pca1,axes = c(1, 3))
+pcs <- as.data.frame(midpca_data_50020_all.pca1$x)
+#model data
+angres.pca <- PCA(midpca_data_50020_all.data_normalized, graph = FALSE)
+print(angres.pca)
+#retrieve data
+var <- get_pca_var(angres.pca)
+###Correlation plot
+fviz_pca_var(angres.pca, col.var = "black")
+corrplot(var$cos2, is.corr=FALSE)
+### Total cos2 of variables on Dim.1 and Dim.2
+angplot1pca<- fviz_cos2(angres.pca, choice = "var", axes = 1:2)
+### Color by cos2 values: quality on the factor map
+angplot2pca<- fviz_pca_var(angres.pca, col.var = "cos2",
+                           gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"), 
+                           repel = TRUE) # Avoid text overlapping)
+###Contributions of variables to PCs
+corrplot(var$contrib, is.corr=FALSE)  
+### Contributions of variables to PC1
+angpca1 <- fviz_contrib(angres.pca, choice = "var", axes = 1, top = 10)
+### Contributions of variables to PC2
+angpca2 <- fviz_contrib(angres.pca, choice = "var", axes = 2, top = 10)
+
+angpca2 <- fviz_contrib(angres.pca, choice = "var", axes = 3, top = 10)
+
+angpca2 <- fviz_contrib(angres.pca, choice = "var", axes = 4, top = 10)
+
+###The total contribution to PC1 and PC2 
+fviz_contrib(angres.pca, choice = "var", axes = 1:2, top = 10)
+###highlighting most important values
+angplot3pca<- fviz_pca_var(angres.pca, col.var = "contrib",
+                           gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
+
+##PCA model for test
+pca_data<- subset(midlandsdata_50020, select = c(5, 10,13, 33, 16:17, 19:21, 27, 28, 39, 40,41,42))
+pca_data1 <- pca_data %>% drop_na()
+pca_data_3<- subset(pca_data1, select = c(1,2,3, 11, 14, 15))
+PCA_50020_all <- cbind(pca_data_3, pcs)
+
+###Scale other variables
+datmidland_50020_GABA_CS <- transform(PCA_50020_all, dates_cs=scale(dates), day_in_year_cs = scale(day_in_year))
+
+###run modeL ENTIRE
+datmidland_50020_GABA_all_fam <- glm(distinct_families ~  PC1 + PC2 + PC3 +  day_in_year_cs + YEAR, family =("poisson"), data=datmidland_50020_GABA_CS)
+summary(datmidland_50020_GABA_all_fam) 
+
+###Model selection
+options(na.action = "na.fail")
+dredge1 <- dredge(datmidland_50020_GABA_all_fam, rank = "AIC")
+#write.table(dredge1, file = "AICc 53593 GABA.txt", sep = ",")
+datmidland_50020_GABA_all_fam <- glm(distinct_families ~ YEAR, family =("poisson"), data=datmidland_50020_GABA_CS)
+summary(datmidland_50020_GABA_all_fam) 
+
+#Null model better than PCA (80%)
+```
+
+
+
+#Site 3 - 53846
+##GABA
+```{r}
+
+###processing data
+pca_data<- subset(midlandsdata_53846, select = c(5, 10, 13, 17, 20, 21, 27,33, 40, 28, 41,42))
+midlandsdata_53846_GABA <- pca_data %>% drop_na() 
+midlandsdata_53846_GABA1<- subset(midlandsdata_53846_GABA, select = c( 4:9))
+
+midlandsdata_53846_GABA1A<- subset(midlandsdata_53846_GABA, select = c( 3:9))
+
+###running PCA
+###Normalised data
+midlandsdata_53846_GABA.data_normalized <- scale(midlandsdata_53846_GABA1)
+midlandsdata_53846_GABA.pca1 <- prcomp(midlandsdata_53846_GABA.data_normalized, center=TRUE, scale.=TRUE)
+fviz_pca_var(midlandsdata_53846_GABA.pca1,axes = c(1, 3))
+pcs <- as.data.frame(midlandsdata_53846_GABA.pca1$x)    
+
+###model data
+angres.pca <- PCA(midlandsdata_53846_GABA.data_normalized, graph = FALSE)
+print(angres.pca)
+###retrieve data
+var <- get_pca_var(angres.pca)
+###Correlation plot
+fviz_pca_var(angres.pca, col.var = "black")
+corrplot(var$cos2, is.corr=FALSE)
+### Total cos2 of variables on Dim.1 and Dim.2
+angplot1pca<- fviz_cos2(angres.pca, choice = "var", axes = 1:2)
+### Color by cos2 values: quality on the factor map
+angplot2pca<- fviz_pca_var(angres.pca, col.var = "cos2",
+                           gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"), 
+                           repel = TRUE) # Avoid text overlapping)
+                           ### Contributions of variables to PCs
+                           corrplot(var$contrib, is.corr=FALSE)  
+                           ### Contributions of variables to PC1
+                           angpca1 <- fviz_contrib(angres.pca, choice = "var", axes = 1, top = 10)
+                           angpca1a <- angpca1 +theme(axis.text=element_text(size=12),
+                                          axis.title=element_text(size=14,face="bold"))  +
+                             scale_x_discrete(labels=c("Temperature", "Ammonical Nitrogen",  "Dissolved Oxygen", "GABA Pesticide","Ammonia", "pH")) +
+                             ggtitle("Contibution of varibales to PC1") 
+                           ### Contributions of variables to PC2
+                           angpca2 <- fviz_contrib(angres.pca, choice = "var", axes = 2, top = 10)
+                           angpca2a<- angpca2 +theme(axis.text=element_text(size=12),
+                                          axis.title=element_text(size=14,face="bold"))  +
+                             scale_x_discrete(labels=c("Ammonia", "pH",  "Dissolved Oxygen", "GABA Pesticide","Temperature", "Ammonical Nitrogen")) +
+                             ggtitle("Contibution of varibales to PC2") 
+
+                           ### Contributions of variables to PC3
+                           angpca2 <- fviz_contrib(angres.pca, choice = "var", axes = 3, top = 10)
+                           angpca2a<- angpca2 +theme(axis.text=element_text(size=12),
+                                          axis.title=element_text(size=14,face="bold"))  +
+                             scale_x_discrete(labels=c("pH", "Ammonial Nitrogen", "GABA Pesticide", "Dissolved Oxygen", "Temperature", "Ammonia")) +
+                             ggtitle("Contibution of varibales to PC3") 
+                           ### The total contribution to PC1 and PC2 
+                           fviz_contrib(angres.pca, choice = "var", axes = 1:2, top = 10)
+                           ### highlighting most important values
+                           angplot3pca<- fviz_pca_var(angres.pca, col.var = "contrib",
+                                                      gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
+
+                           ### PCA model for test
+                           
+                           PCA_53593_GABA <- cbind(midlandsdata_53846_GABA, pcs)       
+                           
+                           
+                           midlandsdata_53846_GABA_1 <- transform(PCA_53593_GABA,  dates_cs=scale(dates), day_in_year_cs = scale(day_in_year), pc1_cs = scale(PC1), pc2_cs= scale(PC2))
+                           
+                           #run modeL ENITRE MODEL
+                           midlandsdata_53846_GABA_fam <- glm(distinct_families ~  PC1 + PC2 +PC3 + day_in_year_cs +YEAR, family=("poisson"),data=midlandsdata_53846_GABA_1)
+                           summary(midlandsdata_53846_GABA_fam) 
+                           
+                           ###Model selection
+options(na.action = "na.fail")
+dredge1 <- dredge(midlandsdata_53846_GABA_fam, rank = "AIC")
+#write.table(dredge1, file = "AICc 53593 GABA.txt", sep = ",")
+
+###run modeL 
+ midlandsdata_53846_GABA_fam <- glm(distinct_families ~ YEAR, family=("poisson"),data=midlandsdata_53846_GABA_1)
+                           summary(midlandsdata_53846_GABA_fam) 
+                           
+#NO PC important
+
+
+```
+
+
+#Site 4 - 55006 ##NA NOT ANY OTHER CHEMICAL INFO
+##GABA
+```{r}
+#Processing
+ #subset data and reomve NAs
+                          # pca_data<- subset(anglaindata_55006, select = c( 6,7,10, 13, 16, 17, 21, 22, 24, 25,29, 35, 36))
+                           #angliandata_55006A <- pca_data %>% drop_na() 
+                           #pca_data1<- subset(angliandata_55006A, select = c( 4:11))
+                           
+                          
+                           #Normalised data
+                           #midlandsdata_47046_GABA.data_normalized <- scale(pca_data1)
+                           #midlandsdata_47046_GABA.pca1 <- prcomp(midlandsdata_47046_GABA.data_normalized, center=TRUE, scale.=TRUE)
+                           #fviz_pca_var(midlandsdata_47046_GABA.pca1,axes = c(1, 2))
+                           #pcs <- as.data.frame(midlandsdata_47046_GABA.pca1$x) 
+                           
+                        
+                           #model data
+                           #angres.pca <- PCA(midlandsdata_47046_GABA.data_normalized, graph = FALSE)
+                           #print(angres.pca)
+                           
+                           
+                           #retrieve data
+                           #var <- get_pca_var(angres.pca)
+                           
+                           #Correlation plot
+                           #fviz_pca_var(angres.pca, col.var = "black")
+                           #corrplot(var$cos2, is.corr=FALSE)
+                           
+                           # Total cos2 of variables on Dim.1 and Dim.2
+                           #angplot1pca<- fviz_cos2(angres.pca, choice = "var", axes = 1:2)
+                           
+                           # Color by cos2 values: quality on the factor map
+                           #angplot2pca<- fviz_pca_var(angres.pca, col.var = "cos2",
+                           #                           gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"), 
+                           #                           repel = TRUE # Avoid text overlapping
+                           #)
+                           
+                           #Contributions of variables to PCs
+                           #corrplot(var$contrib, is.corr=FALSE)  
+                           
+                           # Contributions of variables to PC1
+                           # angpca1 <- fviz_contrib(angres.pca, choice = "var", axes = 1, top = 10)
+
+                           # Contributions of variables to PC2
+                           #angpca2 <- fviz_contrib(angres.pca, choice = "var", axes = 2, top = 10)
+
+                           #The total contribution to PC1 and PC2 
+                           #fviz_contrib(angres.pca, choice = "var", axes = 1:2, top = 10)
+                           
+                           #highlighting most important values
+                           #angplot3pca<- fviz_pca_var(angres.pca, col.var = "contrib",
+                           #                           gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"))
+
+                           
+```
+
+#All Family and Species
+```{r}
+###remove duplicates
+ 
+ fam_spp1<-  fam_spp[!duplicated(fam_spp$Species ),]
+
+###Extract 
+write.xlsx(fam_spp1, file = "All family and species no duplicates.xlsx")
+
+```
+
+#Plots for Lab vs field
+```{r}
+
+#FOR AChE 53594 CHRONIC
+ #FOR GABA_53594
+ p1 <- ggplot(GABA_53594_chronic, aes(x = chemical_mean, y = Source, colour = Endpoint)) + 
+   geom_point( position = position_jitterdodge(), alpha=1, size = 1.3) +   
+   scale_x_continuous(trans='log10') +theme_bw() + facet_wrap(~Family, ncol=4) +  
+   scale_y_discrete(limits = c("Field", "Azinphos-methly", "Azinphos-ethyl","Chlorfenvinphos", "Coumaphos", "Carbophenothion", "Demeton-S-methyl" ,"Diazinon","Dichlorvos","Dimethoate", "Fenitrothion", "Fenthion", "Malathion","Mevinphos", "Omethoate" ,"Parathion-ethyl", "Parathion-methyl", "Propetamphos", "Triazophos")) +xlab("Chemical concentration (\u00B5g/l)") + ylab("Chemcial source") + theme(text = element_text(size = 20))  + 
+   geom_vline(xintercept = 0.72, color = "red", linewidth=0.5) + 
+   theme(axis.text.x = element_text(angle = 90, vjust = 0.5)) + 
+   geom_segment(aes(x =0.0, y = "Triazophos", xend = 0.01, yend = "Triazophos"), color = "black", linewidth = 0.5) +
+   geom_segment(aes(x =0.0, y = "Propetamphos", xend = 0.3 , yend = "Propetamphos"), color = "black", linewidth = 0.5) +
+   geom_segment(aes(x =0.0, y = "Parathion-methyl", xend = 0.015, yend = "Parathion-methyl"), color = "black", linewidth = 0.5) +
+ geom_segment(aes(x =0.0, y = "Parathion-ethyl", xend = 0.01, yend = "Parathion-ethyl"), color = "black", linewidth = 0.5) +
+   geom_segment(aes(x =0.0, y = "Omethoate", xend = 0.01, yend = "Omethoate"), color = "black", linewidth = 0.5) +
+   geom_segment(aes(x =0.0, y = "Mevinphos", xend = 0.025 , yend = "Mevinphos"), color = "black", linewidth = 0.5) +
+ geom_segment(aes(x =0.0, y = "Malathion", xend = 0.02, yend = "Malathion"), color = "black", linewidth = 0.5) +
+   geom_segment(aes(x =0.0, y = "Fenthion", xend = 0.02 , yend = "Fenthion"), color = "black", linewidth = 0.5) +
+ geom_segment(aes(x =0.0, y = "Fenitrothion", xend = 0.02, yend = "Fenitrothion"), color = "black", linewidth = 0.5) +
+ geom_segment(aes(x =0.0, y = "Dimethoate", xend = 0.01, yend = "Dimethoate"), color = "black", linewidth = 0.5) +
+ geom_segment(aes(x =0.0, y = "Diazinon", xend = 0.16, yend = "Diazinon"), color = "black", linewidth = 0.5) +
+   geom_segment(aes(x =0.0, y = "Dichlorvos", xend = 0.05, yend = "Dichlorvos"), color = "black", linewidth = 0.5) +
+   geom_segment(aes(x =0.0, y = "Demeton-S-methyl", xend = 0.01, yend = "Demeton-S-methyl"), color = "black", linewidth = 0.5) +
+   geom_segment(aes(x =0.0, y = "Carbophenothion", xend = 0.01, yend = "Carbophenothion"), color = "black", linewidth = 0.5) +
+   geom_segment(aes(x =0.0, y = "Coumaphos", xend = 0.01, yend = "Coumaphos"), color = "black", linewidth = 0.5) +
+   geom_segment(aes(x =0.0, y = "Chlorfenvinphos", xend = 0.11 , yend = "Chlorfenvinphos"), color = "black", linewidth = 0.5) +
+   geom_segment(aes(x =0.0, y = "Azinphos-ethyl", xend = 0.05, yend = "Azinphos-ethyl"), color = "black", linewidth = 0.5) +
+ geom_segment(aes(x =0.0, y = "Azinphos-methly", xend = 0.05, yend = "Azinphos-methly"), color = "black", linewidth = 0.5)
+ p1
+ 
+ ggsave(p1, file = "53594 Family ACHE subgroup v2 receptor chronic boxplot.png", height = 6, width = 12)
+ 
+ #FOR AChE 53594 Acute
+ #FOR GABA_53594
+ p1 <- ggplot(GABA_53594_acute, aes(x = chemical_mean, y = Source, colour = Endpoint)) + 
+   geom_point(position = position_jitterdodge(), alpha=1, size = 1.3) + 
+   scale_x_continuous(trans='log10') +theme_bw() + 
+   facet_wrap(~Family, ncol =4) +  
+   scale_y_discrete(limits = c("Field", "Azinphos-methly", "Azinphos-ethyl","Chlorfenvinphos", "Coumaphos", "Carbophenothion", "Demeton-S-methyl" ,"Diazinon","Dichlorvos","Dimethoate", "Fenitrothion", "Fenthion", "Malathion","Mevinphos", "Omethoate" ,"Parathion-ethyl", "Parathion-methyl", "Propetamphos", "Triazophos"))  +xlab("Chemical concentration (\u00B5g/l)") + 
+   ylab("Chemcial source")+ theme(text = element_text(size = 20))    + 
+   theme(axis.text.x = element_text(angle = 90, vjust = 0.5)) + 
+   geom_vline(xintercept = 0.72, color = "red", linewidth=0.5) + 
+   geom_segment(aes(x =0.0, y = "Triazophos", xend = 0.01, yend = "Triazophos"), color = "black", linewidth = 0.5) +
+   geom_segment(aes(x =0.0, y = "Propetamphos", xend = 0.3 , yend = "Propetamphos"), color = "black", linewidth = 0.5) +
+   geom_segment(aes(x =0.0, y = "Parathion-methyl", xend = 0.015, yend = "Parathion-methyl"), color = "black", linewidth = 0.5) +
+   geom_segment(aes(x =0.0, y = "Parathion-ethyl", xend = 0.01, yend = "Parathion-ethyl"), color = "black", linewidth = 0.5) +
+   geom_segment(aes(x =0.0, y = "Omethoate", xend = 0.01, yend = "Omethoate"), color = "black", linewidth = 0.5) +
+   geom_segment(aes(x =0.0, y = "Mevinphos", xend = 0.025 , yend = "Mevinphos"), color = "black", linewidth = 0.5) +
+   geom_segment(aes(x =0.0, y = "Malathion", xend = 0.02, yend = "Malathion"), color = "black", linewidth = 0.5) +
+   geom_segment(aes(x =0.0, y = "Fenthion", xend = 0.02 , yend = "Fenthion"), color = "black", linewidth = 0.5) +
+   geom_segment(aes(x =0.0, y = "Fenitrothion", xend = 0.02, yend = "Fenitrothion"), color = "black", linewidth = 0.5) +
+   geom_segment(aes(x =0.0, y = "Dimethoate", xend = 0.01, yend = "Dimethoate"), color = "black", linewidth = 0.5) +
+   geom_segment(aes(x =0.0, y = "Diazinon", xend = 0.16, yend = "Diazinon"), color = "black", linewidth = 0.5) +
+   geom_segment(aes(x =0.0, y = "Dichlorvos", xend = 0.05, yend = "Dichlorvos"), color = "black", linewidth = 0.5) +
+   geom_segment(aes(x =0.0, y = "Demeton-S-methyl", xend = 0.01, yend = "Demeton-S-methyl"), color = "black", linewidth = 0.5) +
+   geom_segment(aes(x =0.0, y = "Carbophenothion", xend = 0.01, yend = "Carbophenothion"), color = "black", linewidth = 0.5) +
+   geom_segment(aes(x =0.0, y = "Coumaphos", xend = 0.01, yend = "Coumaphos"), color = "black", linewidth = 0.5) +
+   geom_segment(aes(x =0.0, y = "Chlorfenvinphos", xend = 0.11 , yend = "Chlorfenvinphos"), color = "black", linewidth = 0.5) +
+   geom_segment(aes(x =0.0, y = "Azinphos-ethyl", xend = 0.05, yend = "Azinphos-ethyl"), color = "black", linewidth = 0.5) +
+   geom_segment(aes(x =0.0, y = "Azinphos-methly", xend = 0.05, yend = "Azinphos-methly"), color = "black", linewidth = 0.5)
+   
+ p1  
+
+ #ggsave(p1, file = "53594 Family ACHE subgroup v2 receptor acute boxplot.png", height = 10, width = 12)
+ 
+ 
+ 
+  #FOR GABA 53594 Acute
+ #FOR GABA_53594 CHRONIC
+ p1 <- ggplot(GABA_53594_acute2, aes(x = GABA_receptor, y = Source, colour = Endpoint)) + 
+   geom_point(position = position_jitterdodge(), alpha=1, size = 1.3) + 
+   scale_x_continuous(trans='log10') +theme_bw() + 
+   facet_wrap(~Family, ncol =4) +  
+   scale_y_discrete(limits = c("Field", "Aldrin", "Dieldrin","Endrin", "Heptachlor", "Lindane"))  + xlab("Chemical concentration (\u00B5g/l)") + 
+   ylab("Chemcial source")+ theme(text = element_text(size = 20))    + 
+   theme(axis.text.x = element_text(angle = 90, vjust = 0.5)) + 
+   geom_vline(xintercept = 0.0476, color = "red", linewidth=0.5) +
+  #ggsave(p1, file = "53594 Family GABA receptor acute boxplot.png", height = 20, width = 12)+ 
+   geom_segment(aes(x =0.0, y = "Triazophos", xend = 0.01, yend = "Triazophos"), color = "black", linewidth = 0.5) +
+   geom_segment(aes(x =0.0, y = "Propetamphos", xend = 0.3 , yend = "Propetamphos"), color = "black", linewidth = 0.5) +
+   geom_segment(aes(x =0.0, y = "Parathion-methyl", xend = 0.015, yend = "Parathion-methyl"), color = "black", linewidth = 0.5) +
+   geom_segment(aes(x =0.0, y = "Parathion-ethyl", xend = 0.01, yend = "Parathion-ethyl"), color = "black", linewidth = 0.5) +
+   geom_segment(aes(x =0.0, y = "Omethoate", xend = 0.01, yend = "Omethoate"), color = "black", linewidth = 0.5) +
+   geom_segment(aes(x =0.0, y = "Mevinphos", xend = 0.025 , yend = "Mevinphos"), color = "black", linewidth = 0.5) +
+   geom_segment(aes(x =0.0, y = "Malathion", xend = 0.02, yend = "Malathion"), color = "black", linewidth = 0.5) +
+   geom_segment(aes(x =0.0, y = "Fenthion", xend = 0.02 , yend = "Fenthion"), color = "black", linewidth = 0.5) +
+   geom_segment(aes(x =0.0, y = "Fenitrothion", xend = 0.02, yend = "Fenitrothion"), color = "black", linewidth = 0.5) +
+   geom_segment(aes(x =0.0, y = "Dimethoate", xend = 0.01, yend = "Dimethoate"), color = "black", linewidth = 0.5) +
+   geom_segment(aes(x =0.0, y = "Diazinon", xend = 0.16, yend = "Diazinon"), color = "black", linewidth = 0.5) +
+   geom_segment(aes(x =0.0, y = "Dichlorvos", xend = 0.05, yend = "Dichlorvos"), color = "black", linewidth = 0.5) +
+   geom_segment(aes(x =0.0, y = "Demeton-S-methyl", xend = 0.01, yend = "Demeton-S-methyl"), color = "black", linewidth = 0.5) +
+   geom_segment(aes(x =0.0, y = "Carbophenothion", xend = 0.01, yend = "Carbophenothion"), color = "black", linewidth = 0.5) +
+   geom_segment(aes(x =0.0, y = "Coumaphos", xend = 0.01, yend = "Coumaphos"), color = "black", linewidth = 0.5) +
+   geom_segment(aes(x =0.0, y = "Chlorfenvinphos", xend = 0.11 , yend = "Chlorfenvinphos"), color = "black", linewidth = 0.5) +
+   geom_segment(aes(x =0.0, y = "Azinphos-ethyl", xend = 0.05, yend = "Azinphos-ethyl"), color = "black", linewidth = 0.5) +
+   geom_segment(aes(x =0.0, y = "Azinphos-methly", xend = 0.05, yend = "Azinphos-methly"), color = "black", linewidth = 0.5)
+   
+ p1  
+
+# ggsave(p1, file = "53594 Family ACHE subgroup v2 receptor acute boxplot.png", height = 10, width = 12)
+
+```
+
+#Identifying highest concentrations of chemicals per site
+```{r}
+##Load dataset
+Angliandata <-read.csv("C:/Users/imoge/OneDrive/phd/Research/Objective 4/Paper work/Final datasets for analysis/Final datasets for mergance/all chemical data 16_01_23_overlap_sites.csv")
+Midlanddata <-read.csv("C:/Users/imoge/OneDrive/phd/Research/Objective 4/ALL Midlands data for merging/Midlands chem final overlap data.csv")
+
+
+#Anglia
+data_new2<- Angliandata %>%
+  group_by(determinand.definition, SITE_ID, MOA, Longitude, Latitude) %>%
+  summarise(max = max(result, na.rm=TRUE))
+
+
+#write.table(data_new2, file='Maximum concentrations for chemicals at sites in Anglia.txt', sep=',')
+
+#Midlands
+data_new3<- Midlanddata %>%
+  group_by(determinand.definition, SITE_ID, MOA, Longitude, Latitude) %>%
+  summarise(max = max(result, na.rm=TRUE))
+
+
+#write.table(data_new3, file='Maximum concentrations for chemicals at sites in Midlands.txt', sep=',')
+
+
+```
+
+#Identifying highest concentrations of chemicals per site over time (per year)
+```{r}
+##Load dataset
+Angliandata <-read.csv("C:/Users/imoge/OneDrive/phd/Research/Objective 4/Paper work/Final datasets for analysis/Final datasets for mergance/all chemical data 16_01_23_overlap_sites.csv")
+Midlanddata <-read.csv("C:/Users/imoge/OneDrive/phd/Research/Objective 4/ALL Midlands data for merging/Midlands chem final overlap data.csv")
+
+total_data <- read.csv("C:/Users/imoge/OneDrive/phd/Research/Objective 4/Andrew data analysis extra/all chemical data 12_07_23.csv")
+      data_subset_AChE <- total_data[total_data$MOA %in% c('AChE inhibition'),]
+      data_subset_GABA <- total_data[total_data$MOA %in% c('GABA receptor'),]
+
+#All data - mean conc per year
+      #GABA
+        data_subset_GABA_conc <- data_subset_GABA %>%
+        group_by(YEAR) %>%
+        summarise(mean = mean(result, na.rm=TRUE))
+    
+      #AChE
+        data_subset_AChE_conc <- data_subset_AChE %>%
+        group_by(YEAR) %>%
+        summarise(mean = mean(result, na.rm=TRUE))  
+        
+  
+#All data - max conc per year
+      #GABA
+        data_subset_GABA_conc_max <- data_subset_GABA %>%
+        group_by(YEAR) %>%
+        summarise(max = max(result, na.rm=TRUE))
+    
+      #AChE
+        data_subset_AChE_conc_max <- data_subset_AChE %>%
+        group_by(YEAR) %>%
+        summarise(max = max(result, na.rm=TRUE))  
+
+
+##PLOTS
+      
+      #GABA
+        GABA_mean <- ggplot(data_subset_GABA_conc, aes(x = YEAR, y = mean)) +  
+          geom_bar(stat="identity", fill="steelblue")+
+          theme_minimal() +ylab("Mean concentration (µg/l)") +xlab("Year") +
+          theme(text=element_text(size=16),  axis.title.y = element_text(vjust = +1.5),
+          axis.title.x = element_text(vjust = -1.5))
+                
+        GABA_max <- ggplot(data_subset_GABA_conc_max, aes(x = YEAR, y = max)) +  
+        geom_bar(stat="identity", fill="steelblue")+
+          theme_minimal() +ylab("Max concentration (µg/l)") +xlab("Year") +
+          theme(text=element_text(size=16),  axis.title.y = element_text(vjust = +1.5),
+          axis.title.x = element_text(vjust = -1.5))
+
+      #ACHE
+        ACHE_mean <- ggplot(data_subset_AChE_conc, aes(x = YEAR, y = mean)) +  
+        geom_bar(stat="identity", fill="steelblue")+
+          theme_minimal() +ylab("Mean concentration (µg/l)") +xlab("Year") +
+          theme(text=element_text(size=16),  axis.title.y = element_text(vjust = +1.5),
+          axis.title.x = element_text(vjust = -1.5))
+        
+        ACHE_max <- ggplot(data_subset_AChE_conc_max, aes(x = YEAR, y = max)) +  
+        geom_bar(stat="identity", fill="steelblue")+
+          theme_minimal() +ylab("Max concentration (µg/l)") +xlab("Year")  +
+          theme(text=element_text(size=16),  axis.title.y = element_text(vjust = +1.5),
+          axis.title.x = element_text(vjust = -1.5))
+        
+        
+        
+#ARABLE PERCENTAGE VS PESTICIDE CONC
+        
+        
+         #All data - mean conc per year
+      
+      #ALL
+        total_data_arable_conc <- total_data %>%
+        group_by(SITE_ID, arable_perc) %>%
+        summarise(mean = mean(result, na.rm=TRUE))
+        
+        total_data_arable_conc_max <- total_data %>%
+        group_by(SITE_ID, arable_perc) %>%
+        summarise(max = max(result, na.rm=TRUE))
+        
+      
+      #GABA
+        data_GABA_arable_conc <- data_subset_GABA %>%
+        group_by(SITE_ID, arable_perc) %>%
+        summarise(mean = mean(result, na.rm=TRUE))
+    
+      #AChE
+        data_ACHE_arable_conc <- data_subset_AChE %>%
+        group_by(SITE_ID, arable_perc) %>%
+        summarise(mean = mean(result, na.rm=TRUE)) 
+        
+        #All data - max conc per year
+      #GABA
+        data_GABA_arable_conc_max <- data_subset_GABA %>%
+        group_by(SITE_ID, arable_perc) %>%
+        summarise(max = max(result, na.rm=TRUE))
+    
+      #AChE
+        data_ACHE_arable_conc_max <- data_subset_AChE %>%
+        group_by(SITE_ID, arable_perc) %>%
+        summarise(max = max(result, na.rm=TRUE))  
+        
+        
+  #plot
+        geom_smooth(method = "lm", se = FALSE)
+        #GABA
+        
+        GABA_arable_mean <- ggplot(data_GABA_arable_conc, aes(x = arable_perc, y = mean)) +  
+          geom_point() +
+          theme_minimal() +ylab("Mean concentration (µg/l)") +xlab("Percentage of arable farming upstream") +
+       theme(text=element_text(size=16),  axis.title.y = element_text(vjust = +1.5, size = 20),
+          axis.title.x = element_text(vjust = -1.5, size = 20))
+                ggsave(GABA_arable_mean, file=("GABA_arable_mean.tiff"), dpi = 330)
+        GABA_arable_max <- ggplot(data_GABA_arable_conc_max, aes(x = arable_perc, y = max)) +  
+          geom_point() + 
+          theme_minimal() +ylab("Max concentration (µg/l)") +xlab("Percentage of arable farming upstream") +
+         theme(text=element_text(size=16),  axis.title.y = element_text(vjust = +1.5, size = 20),
+          axis.title.x = element_text(vjust = -1.5, size = 20))
+                        ggsave(GABA_arable_max, file=("GABA_arable_max.tiff"), dpi = 330)
+
+        
+        #AChE
+        
+        AChE_arable_mean <- ggplot(data_ACHE_arable_conc, aes(x = arable_perc, y = mean)) +  
+          geom_point() + 
+          theme_minimal() +ylab("Mean concentration (µg/l)") +xlab("Percentage of arable farming upstream") +
+          theme(text=element_text(size=16),  axis.title.y = element_text(vjust = +1.5, size = 20),
+          axis.title.x = element_text(vjust = -1.5, size = 20))
+                                ggsave(AChE_arable_mean, file=("AChE_arable_mean.tiff"), dpi = 330)
+
+                
+        AChE_arable_max <- ggplot(data_ACHE_arable_conc_max, aes(x = arable_perc, y = max)) +  
+          geom_point() +
+          theme_minimal() +ylab("Max concentration (µg/l)") +xlab("Percentage of arable farming upstream") +
+         theme(text=element_text(size=16),  axis.title.y = element_text(vjust = +1.5, size = 20),
+          axis.title.x = element_text(vjust = -1.5, size = 20))
+                                ggsave(AChE_arable_max, file=("AChE_arable_max.tiff"), dpi = 330)
+        
+        #All
+        All_arable_mean <- ggplot(total_data_arable_conc, aes(x = arable_perc, y = mean)) +  
+          geom_point() + 
+          theme_minimal() +ylab("Mean concentration (µg/l)") +xlab("Percentage of arable farming upstream") +
+          theme(text=element_text(size=16),  axis.title.y = element_text(vjust = +1.5),
+          axis.title.x = element_text(vjust = -1.5)) +
+          scale_y_continuous(trans='log2')
+                
+        All_arable_max <- ggplot(total_data_arable_conc_max, aes(x = arable_perc, y = max)) +  
+          geom_point() + geom_smooth() +
+          theme_minimal() +ylab("Max concentration (µg/l)") +xlab("Percentage of arable farming upstream") +
+          theme(text=element_text(size=16),  axis.title.y = element_text(vjust = +1.5),
+          axis.title.x = element_text(vjust = -1.5))
+```
+#Relationship between sites with threshold exceedances of chemical conc vs macroinvert data
+
+```{r}
+
+      #Load datasets
+        
+        fam_rich <- read.csv("C:/Users/imoge/OneDrive/phd/Research/Objective 4/ALL Midlands data for merging/family richness data.csv")
+        fam_rich2 <- read.csv("C:/Users/imoge/OneDrive/phd/Research/Objective 4/Paper work/Final datasets for analysis/Final datasets for mergance/family richness final data.csv")
+          
+        fam_rich$MY.DATE1 <- do.call(paste, list(fam_rich$MONTH, fam_rich$DAY, fam_rich$YEAR))
+        fam_rich$MY.DATE1 <- as.Date(fam_rich$MY.DATE1, format=c("%m %d %Y"))
+        fam_rich2$MY.DATE1 <- do.call(paste, list(fam_rich2$MONTH, fam_rich2$DAY, fam_rich2$YEAR))
+        fam_rich2$MY.DATE1 <- as.Date(fam_rich2$MY.DATE1, format=c("%m %d %Y"))
+      
+      #calculate single all pesticides value for each sample date
+      
+        total_data_day <- total_data %>%
+        group_by(DAY, MONTH, YEAR, SITE_ID) %>%
+        summarise(mean = mean(result, na.rm=TRUE))
+        total_data_day$MY.DATE1 <- do.call(paste, list(total_data_day$MONTH, total_data_day$DAY, total_data_day$YEAR))
+        total_data_day$MY.DATE1 <- as.Date(total_data_day$MY.DATE1, format=c("%m %d %Y"))
+        
+        #merge datasets - ALL pesticide
+        
+        data_all_fam_conc0 <- rbind(total_data_day,fam_rich)
+        data_all_fam_conc <- rbind(data_all_fam_conc0,fam_rich2)
+
+        
+      #calculate single MOA pesticides value for each sample date
+      
+        total_data_day_ACHE <- data_subset_AChE %>%
+        group_by(DAY, MONTH, YEAR, SITE_ID) %>%
+        summarise(mean = mean(result, na.rm=TRUE))
+        total_data_day_ACHE$MY.DATE1 <- do.call(paste, list(total_data_day_ACHE$MONTH, total_data_day_ACHE$DAY, total_data_day_ACHE$YEAR))
+        total_data_day_ACHE$MY.DATE1 <- as.Date(total_data_day_ACHE$MY.DATE1, format=c("%m %d %Y"))
+      
+      #Merge datasets for only AChE
+        
+        data_all_fam_conc_ACHE0 <- rbind(total_data_day_ACHE,fam_rich)
+                data_all_fam_conc_ACHE <- rbind(data_all_fam_conc_ACHE0,fam_rich2)
+
+        
+      #calculate single MOA pesticides value for each sample date
+      
+        total_data_day_GABA <- data_subset_GABA %>%
+        group_by(DAY, MONTH, YEAR, SITE_ID) %>%
+        summarise(mean = mean(result, na.rm=TRUE))
+        total_data_day_GABA$MY.DATE1 <- do.call(paste, list(total_data_day_GABA$MONTH, total_data_day_GABA$DAY, total_data_day_GABA$YEAR))
+        total_data_day_GABA$MY.DATE1 <- as.Date(total_data_day_GABA$MY.DATE1, format=c("%m %d %Y"))
+      
+        data_all_fam_conc_GABA0 <- rbind(total_data_day_GABA,fam_rich)
+        data_all_fam_conc_GABA <- rbind(data_all_fam_conc_GABA0,fam_rich2)
+        
+        coeff = 100
+
+        PLOT_total <- ggplot(data_all_fam_conc_GABA, aes(x=MY.DATE1)) +  geom_point( aes(y=distinct_families), 
+                        size=2, color= "red") + geom_point (aes(y=mean*coeff), size=2, color = "blue") + geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                      geom_smooth(aes(y=mean*coeff),method="loess", col="blue")+ scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic() +
+                        theme(axis.title.y = element_text(size=13),axis.title.y.right = element_text(size=13)) 
+        
+      #Select sites and run plots - comapring macro richness and conc pesticides over time
+      
+              #47138
+                #ONLY EXCEEDENCE IS Parathion-methyl which the threshold conc based on lab data is very low 0.00031 µg/l
+        
+                      data_all_fam_conc_47138 <- data_all_fam_conc[data_all_fam_conc$SITE_ID %in% c('47138'),] #SELECT SITE ALL PESTCIDE
+                      data_all_fam_conc_ACHE_47138 <- data_all_fam_conc_ACHE[data_all_fam_conc_ACHE$SITE_ID %in% c('47138'),] 
+                                                                                                            #SELECT SITE ALL PESTCIDE
+                      data_all_fam_conc_GABA_47138 <- data_all_fam_conc_GABA[data_all_fam_conc_GABA$SITE_ID %in% c('47138'),] 
+                                                                                                            #SELECT SITE ALL PESTCIDE
+                      
+                      
+                      
+                      #ALL pesticide
+                      PLOT_47138 <- ggplot(data_all_fam_conc_47138, aes(x=MY.DATE1)) +  geom_point( aes(y=distinct_families), 
+                        size=2, color= "red") + geom_point (aes(y=mean*coeff), size=2, color = "blue") + scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic() +
+                        theme(axis.title.y = element_text(size=13),axis.title.y.right = element_text(size=13)) 
+                      
+                      #ACHE pesticide
+                      PLOT_47138_ACHE <- ggplot(data_all_fam_conc_ACHE_47138, aes(x=MY.DATE1)) +  geom_point( aes(y=distinct_families), 
+                        size=2, color= "red") + geom_point (aes(y=mean*coeff), size=2, color = "blue") + geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                      geom_smooth(aes(y=mean*coeff),method="loess", col="blue") +scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic() +
+                        ggtitle("47138 ACHE") +
+                        xlab("Time") +
+                        theme(plot.title = element_text(size = 20, 
+                                                  face = "bold", hjust=0.5), axis.title.y = element_text(size=20, face= "bold"), axis.title.y.right = element_text(size=20, face= "bold", vjust=1), axis.title.x = element_text(size = 20, face = "bold")) + theme(text=element_text(size=20))   
+
+                      
+                      #GABA pesticide
+                      PLOT_47138_GABA <- ggplot(data_all_fam_conc_GABA_47138, aes(x=MY.DATE1)) +  geom_point( aes(y=distinct_families), 
+                        size=2, color= "red") + geom_point (aes(y=mean*coeff), size=2, color = "blue") + geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                      geom_smooth(aes(y=mean*coeff),method="loess", col="blue") +scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic() +
+                        ggtitle("47138 GABA") +
+                        xlab("Time") +
+                        theme(plot.title = element_text(size = 20, 
+                                                  face = "bold", hjust=0.5), axis.title.y = element_text(size=20, face= "bold"), axis.title.y.right = element_text(size=20, face= "bold", vjust=1), axis.title.x = element_text(size = 20, face = "bold")) + theme(text=element_text(size=20))   
+
+             
+                #47255
+                #EXCEEDENCE of Parathion-methyl, Malathion, Azinphos-methyl, Fenitrothion, Fipronil, Mevinphos 
+                      #which the threshold conc based on lab data is very low 0.00031 µg/l
+
+                      
+                      data_all_fam_conc_47255 <- data_all_fam_conc[data_all_fam_conc$SITE_ID %in% c('47255'),] #SELECT SITE ALL PESTCIDE
+                      data_all_fam_conc_ACHE_47255 <- data_all_fam_conc_ACHE[data_all_fam_conc_ACHE$SITE_ID %in% c('47255'),] 
+                                                                                                            #SELECT SITE ALL PESTCIDE
+                      data_all_fam_conc_GABA_47255 <- data_all_fam_conc_GABA[data_all_fam_conc_GABA$SITE_ID %in% c('47255'),] 
+                                                                                                            #SELECT SITE ALL PESTCIDE
+                      
+                     
+                      
+                      #ALL pesticide
+                      PLOT_47255 <- ggplot(data_all_fam_conc_47255, aes(x=MY.DATE1)) +  geom_point( aes(y=distinct_families), 
+                        size=2, color= "red") + geom_point (aes(y=mean*coeff2), size=2, color = "blue") + scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic() +
+                        theme(axis.title.y = element_text(size=13),axis.title.y.right = element_text(size=13)) 
+                      
+                      #ACHE pesticide
+                      PLOT_47255_ACHE <- ggplot(data_all_fam_conc_ACHE_47255, aes(x=MY.DATE1)) +  geom_point( aes(y=distinct_families), 
+                        size=2, color= "red") + geom_point (aes(y=mean*coeff2), size=2, color = "blue") + geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                      geom_smooth(aes(y=mean*coeff),method="loess", col="blue") +scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic() +
+                        ggtitle("47255 ACHE") +
+                        xlab("Time") +
+                        theme(plot.title = element_text(size = 20, 
+                                                  face = "bold", hjust=0.5), axis.title.y = element_text(size=20, face= "bold"), axis.title.y.right = element_text(size=20, face= "bold", vjust=1), axis.title.x = element_text(size = 20, face = "bold")) + theme(text=element_text(size=20))   
+                      
+                      #GABA pesticide
+                      PLOT_47255_GABA <- ggplot(data_all_fam_conc_GABA_47255, aes(x=MY.DATE1)) +  geom_point( aes(y=distinct_families), 
+                        size=2, color= "red") + geom_point (aes(y=mean*coeff), size=2, color = "blue") + geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                      geom_smooth(aes(y=mean*coeff),method="loess", col="blue") +scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic() +
+                        ggtitle("47255 GABA") +
+                        xlab("Time") +
+                        theme(plot.title = element_text(size = 20, 
+                                                  face = "bold", hjust=0.5), axis.title.y = element_text(size=20, face= "bold"), axis.title.y.right = element_text(size=20, face= "bold", vjust=1), axis.title.x = element_text(size = 20, face = "bold")) + theme(text=element_text(size=20))   
+
+                      
+              #48583
+                #EXCEEDENCE of Parathion-methyl,  Fenitrothion, Diazinon
+                      #which the threshold conc based on lab data is very low 0.00031 µg/l
+
+                      
+                      data_all_fam_conc_48583 <- data_all_fam_conc[data_all_fam_conc$SITE_ID %in% c('48583'),] #SELECT SITE ALL PESTCIDE
+                      data_all_fam_conc_ACHE_48583 <- data_all_fam_conc_ACHE[data_all_fam_conc_ACHE$SITE_ID %in% c('48583'),] 
+                                                                                                            #SELECT SITE ALL PESTCIDE
+                      data_all_fam_conc_GABA_48583 <- data_all_fam_conc_GABA[data_all_fam_conc_GABA$SITE_ID %in% c('48583'),] 
+                                                                                                            #SELECT SITE ALL PESTCIDE
+                      
+                      
+                      
+                      #ALL pesticide
+                      PLOT_48583 <- ggplot(data_all_fam_conc_48583, aes(x=MY.DATE1)) +  geom_point( aes(y=distinct_families), 
+                        size=2, color= "red") + geom_point (aes(y=mean*coeff2), size=2, color = "blue") + scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic() +
+                        theme(axis.title.y = element_text(size=13),axis.title.y.right = element_text(size=13)) 
+                      
+                      #ACHE pesticide
+                      PLOT_48583_ACHE <- ggplot(data_all_fam_conc_ACHE_48583, aes(x=MY.DATE1)) +  geom_point( aes(y=distinct_families), 
+                        size=2, color= "red") + geom_point (aes(y=mean*coeff2), size=2, color = "blue") + geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                      geom_smooth(aes(y=mean*coeff),method="loess", col="blue") + scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic() +
+                        ggtitle("48583 ACHE") +
+                        xlab("Time") +
+                        theme(plot.title = element_text(size = 20, 
+                                                  face = "bold", hjust=0.5), axis.title.y = element_text(size=20, face= "bold"), axis.title.y.right = element_text(size=20, face= "bold", vjust=1), axis.title.x = element_text(size = 20, face = "bold")) + theme(text=element_text(size=20))   
+                      
+                      #GABA pesticide
+                      PLOT_48583_GABA <- ggplot(data_all_fam_conc_GABA_48583, aes(x=MY.DATE1)) +  geom_point( aes(y=distinct_families), 
+                        size=2, color= "red") + geom_point (aes(y=mean*coeff), size=2, color = "blue") + geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                      geom_smooth(aes(y=mean*coeff),method="loess", col="blue") +scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic() +
+                        ggtitle("48583 GABA") +
+                        xlab("Time") +
+                        theme(plot.title = element_text(size = 20, 
+                                                  face = "bold", hjust=0.5), axis.title.y = element_text(size=20, face= "bold"), axis.title.y.right = element_text(size=20, face= "bold", vjust=1), axis.title.x = element_text(size = 20, face = "bold")) + theme(text=element_text(size=20))      
+                      
+       #49881
+                #EXCEEDENCE of Parathion-methyl,  Malathion, Diazinon, Carbaryl (ALL ACHE INHIBITORS)
+                      #which the threshold conc based on lab data is very low 0.00031 µg/l
+
+                      
+                      data_all_fam_conc_49881 <- data_all_fam_conc[data_all_fam_conc$SITE_ID %in% c('49881'),] #SELECT SITE ALL PESTCIDE
+                      data_all_fam_conc_ACHE_49881 <- data_all_fam_conc_ACHE[data_all_fam_conc_ACHE$SITE_ID %in% c('49881'),] 
+                                                                                                            #SELECT SITE ALL PESTCIDE
+                      data_all_fam_conc_GABA_49881 <- data_all_fam_conc_GABA[data_all_fam_conc_GABA$SITE_ID %in% c('49881'),] 
+                                                                                                            #SELECT SITE ALL PESTCIDE
+                      
+                  
+                      
+                      #ALL pesticide -YES
+                      PLOT_49881 <- ggplot(data_all_fam_conc_49881, aes(x=MY.DATE1)) +  
+                        geom_point( aes(y=distinct_families), 
+                        size=0.5, color= "red") + geom_point (aes(y=mean*coeff), size=0.5, color = "blue") +
+                        geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                      geom_smooth(aes(y=mean*coeff),method="loess", col="blue") +
+                        scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic() +
+                        theme(axis.title.y = element_text(size=13),axis.title.y.right = element_text(size=13)) 
+                      
+                      #ACHE pesticide -YES
+                      PLOT_49881_ACHE <- ggplot(data_all_fam_conc_ACHE_49881, aes(x=MY.DATE1)) +  
+                        geom_point( aes(y=distinct_families), 
+                        size=0.5, color= "red") + geom_point (aes(y=mean*coeff), size=0.5, color = "blue") +
+                        geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                      geom_smooth(aes(y=mean*coeff),method="loess", col="blue") +
+                        scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic() +
+                        ggtitle("49881 ACHE") +
+                        xlab("Time") +
+                        theme(plot.title = element_text(size = 20, 
+                                                  face = "bold", hjust=0.5), axis.title.y = element_text(size=20, face= "bold"), axis.title.y.right = element_text(size=20, face= "bold", vjust=1), axis.title.x = element_text(size = 20, face = "bold")) + theme(text=element_text(size=20))   
+                                       
+                      
+                      
+                      #GABA pesticide
+                      PLOT_49881_GABA <- ggplot(data_all_fam_conc_GABA_49881, aes(x=MY.DATE1))+  
+                        geom_point( aes(y=distinct_families), 
+                        size=0.5, color= "red") + geom_point (aes(y=mean*coeff), size=0.5, color = "blue") +
+                        geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                      geom_smooth(aes(y=mean*coeff),method="loess", col="blue") + 
+                        scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic() +
+                        ggtitle("49881 GABA") +
+                        xlab("Time") +
+                        theme(plot.title = element_text(size = 20, 
+                                                  face = "bold", hjust=0.5), axis.title.y = element_text(size=20, face= "bold"), axis.title.y.right = element_text(size=20, face= "bold", vjust=1), axis.title.x = element_text(size = 20, face = "bold")) + theme(text=element_text(size=20))   
+                                       
+                           
+                 
+                      
+              #50020
+                #EXCEEDENCE of Parathion-methyl,  
+                      #which the threshold conc based on lab data is very low 0.00031 µg/l
+
+                      
+                      data_all_fam_conc_50020 <- data_all_fam_conc[data_all_fam_conc$SITE_ID %in% c('50020'),] #SELECT SITE ALL PESTCIDE
+                      data_all_fam_conc_ACHE_50020 <- data_all_fam_conc_ACHE[data_all_fam_conc_ACHE$SITE_ID %in% c('50020'),] 
+                                                                                                            #SELECT SITE ALL PESTCIDE
+                      data_all_fam_conc_GABA_50020 <- data_all_fam_conc_GABA[data_all_fam_conc_GABA$SITE_ID %in% c('50020'),] 
+                                                                                                            #SELECT SITE ALL PESTCIDE
+                      
+                  
+                      
+                      #ALL pesticide -YES
+                      PLOT_50020 <- ggplot(data_all_fam_conc_50020, aes(x=MY.DATE1)) +  
+                        geom_point( aes(y=distinct_families), 
+                        size=0.5, color= "red") + geom_point (aes(y=mean*coeff), size=0.5, color = "blue") +
+                        geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                      geom_smooth(aes(y=mean*coeff),method="loess", col="blue") +
+                        scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic() +
+                        theme(axis.title.y = element_text(size=13),axis.title.y.right = element_text(size=13)) 
+                      
+                      #ACHE pesticide -YES
+                      PLOT_50020_ACHE <- ggplot(data_all_fam_conc_ACHE_50020, aes(x=MY.DATE1)) +  
+                        geom_point( aes(y=distinct_families), 
+                        size=0.5, color= "red") + geom_point (aes(y=mean*coeff), size=0.5, color = "blue") +
+                        geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                      geom_smooth(aes(y=mean*coeff),method="loess", col="blue") +
+                        scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic() +
+                        ggtitle("50020 ACHE") +
+                        xlab("Time") +
+                        theme(plot.title = element_text(size = 20, 
+                                                  face = "bold", hjust=0.5), axis.title.y = element_text(size=20, face= "bold"), axis.title.y.right = element_text(size=20, face= "bold", vjust=1), axis.title.x = element_text(size = 20, face = "bold")) + theme(text=element_text(size=20))   
+                                  
+                      
+                      #GABA pesticide
+                      PLOT_50020_GABA <- ggplot(data_all_fam_conc_GABA_50020, aes(x=MY.DATE1))+  
+                        geom_point( aes(y=distinct_families), 
+                        size=0.5, color= "red") + geom_point (aes(y=mean*coeff), size=0.5, color = "blue") +
+                        geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                      geom_smooth(aes(y=mean*coeff),method="loess", col="blue") + 
+                        scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic() +
+                        ggtitle("50020 GABA") +
+                        xlab("Time") +
+                        theme(plot.title = element_text(size = 20, 
+                                                  face = "bold", hjust=0.5), axis.title.y = element_text(size=20, face= "bold"), axis.title.y.right = element_text(size=20, face= "bold", vjust=1), axis.title.x = element_text(size = 20, face = "bold")) + theme(text=element_text(size=20))   
+                                       
+                      
+          #50031
+                #EXCEEDENCE of Parathion-methyl, Malathion, Fenitrothion, Dichlorvos, Phorate
+ 
+                      #which the threshold conc based on lab data is very low 0.00031 µg/l
+
+                      
+                      data_all_fam_conc_50031<- data_all_fam_conc[data_all_fam_conc$SITE_ID %in% c('50031'),] #SELECT SITE ALL PESTCIDE
+                      data_all_fam_conc_ACHE_50031 <- data_all_fam_conc_ACHE[data_all_fam_conc_ACHE$SITE_ID %in% c('50031'),] 
+                                                                                                            #SELECT SITE ALL PESTCIDE
+                      data_all_fam_conc_GABA_50031 <- data_all_fam_conc_GABA[data_all_fam_conc_GABA$SITE_ID %in% c('50031'),] 
+                                                                                                            #SELECT SITE ALL PESTCIDE
+                      
+                  
+                      
+                      #ALL pesticide -
+                      PLOT_550031 <- ggplot(data_all_fam_conc_50031, aes(x=MY.DATE1)) +  
+                        geom_point( aes(y=distinct_families), 
+                        size=0.5, color= "red") + geom_point (aes(y=mean*coeff), size=0.5, color = "blue") +
+                        geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                      geom_smooth(aes(y=mean*coeff),method="loess", col="blue") +
+                        scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic() +
+                        theme(axis.title.y = element_text(size=13),axis.title.y.right = element_text(size=13)) 
+                      
+                      #ACHE pesticide 
+                      PLOT_50031_ACHE <- ggplot(data_all_fam_conc_ACHE_50031, aes(x=MY.DATE1)) +  
+                        geom_point( aes(y=distinct_families), 
+                        size=0.5, color= "red") + geom_point (aes(y=mean*coeff), size=0.5, color = "blue") +
+                        geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                      #geom_smooth(aes(y=mean*coeff),method="loess", col="blue") +
+                        scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic() +
+                        ggtitle("50031 ACHE") +
+                        xlab("Time") +
+                        theme(plot.title = element_text(size = 20, 
+                                                  face = "bold", hjust=0.5), axis.title.y = element_text(size=20, face= "bold"), axis.title.y.right = element_text(size=20, face= "bold", vjust=1), axis.title.x = element_text(size = 20, face = "bold")) + theme(text=element_text(size=20))
+                      
+                      #GABA pesticide
+                      PLOT_50031_GABA <- ggplot(data_all_fam_conc_GABA_50031, aes(x=MY.DATE1))+  
+                        geom_point( aes(y=distinct_families), 
+                        size=0.5, color= "red") + geom_point (aes(y=mean*coeff), size=0.5, color = "blue") +
+                        geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                      geom_smooth(aes(y=mean*coeff),method="loess", col="blue") + 
+                        scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic() +
+                        ggtitle("50031 GABA") +
+                        xlab("Time") +
+                        theme(plot.title = element_text(size = 20, 
+                                                  face = "bold", hjust=0.5), axis.title.y = element_text(size=20, face= "bold"), axis.title.y.right = element_text(size=20, face= "bold", vjust=1), axis.title.x = element_text(size = 20, face = "bold")) + theme(text=element_text(size=20))   
+                                  
+                      
+                       #50139
+                #EXCEEDENCE of Parathion-methyl, Malathion, Dichlorvos, Carbaryl, Diazinon
+                      #which the threshold conc based on lab data is very low 0.00031 µg/l
+
+                      
+                      data_all_fam_conc_50139<- data_all_fam_conc[data_all_fam_conc$SITE_ID %in% c('50139'),] #SELECT SITE ALL PESTCIDE
+                      data_all_fam_conc_ACHE_50139 <- data_all_fam_conc_ACHE[data_all_fam_conc_ACHE$SITE_ID %in% c('50139'),] 
+                                                                                                            #SELECT SITE ALL PESTCIDE
+                      data_all_fam_conc_GABA_50139 <- data_all_fam_conc_GABA[data_all_fam_conc_GABA$SITE_ID %in% c('50139'),] 
+                                                                                                            #SELECT SITE ALL PESTCIDE
+                      
+                
+                      #ALL pesticide 
+                      PLOT_50139 <- ggplot(data_all_fam_conc_50139, aes(x=MY.DATE1)) +  
+                        geom_point( aes(y=distinct_families), 
+                        size=0.5, color= "red") + geom_point (aes(y=mean*coeff), size=0.5, color = "blue") +
+                        geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                      geom_smooth(aes(y=mean*coeff),method="loess", col="blue") +
+                        scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic() +
+                        theme(axis.title.y = element_text(size=13),axis.title.y.right = element_text(size=13)) 
+                      
+                      #ACHE pesticide 
+                      PLOT_50139_ACHE <- ggplot(data_all_fam_conc_ACHE_50139, aes(x=MY.DATE1)) +  
+                        geom_point( aes(y=distinct_families), 
+                        size=0.5, color= "red") + geom_point (aes(y=mean*coeff2), size=0.5, color = "blue") +
+                        geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                      geom_smooth(aes(y=mean*coeff),method="loess", col="blue") +
+                        scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic() +
+                        ggtitle("50139 ACHE") +
+                        xlab("Time") +
+                        theme(plot.title = element_text(size = 20, 
+                                                  face = "bold", hjust=0.5), axis.title.y = element_text(size=20, face= "bold"), axis.title.y.right = element_text(size=20, face= "bold", vjust=1), axis.title.x = element_text(size = 20, face = "bold")) + theme(text=element_text(size=20))
+                      
+                      #GABA pesticide
+                      PLOT_50139_GABA <- ggplot(data_all_fam_conc_GABA_50139, aes(x=MY.DATE1))+  
+                        geom_point( aes(y=distinct_families), 
+                        size=0.5, color= "red") + geom_point (aes(y=mean*coeff), size=0.5, color = "blue") +
+                        geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                      geom_smooth(aes(y=mean*coeff),method="loess", col="blue") + 
+                        scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic()+
+                        ggtitle("50139 ACHE") +
+                        xlab("Time") +
+                        theme(plot.title = element_text(size = 20, 
+                                                  face = "bold", hjust=0.5), axis.title.y = element_text(size=20, face= "bold"), axis.title.y.right = element_text(size=20, face= "bold", vjust=1), axis.title.x = element_text(size = 20, face = "bold")) + theme(text=element_text(size=20))
+                      
+                      
+                        #50257
+                #EXCEEDENCE of Parathion-methyl Azinphos-methyl, Malathion, Dichlorvos
+                      #which the threshold conc based on lab data is very low 0.00031 µg/l
+
+                      
+                      data_all_fam_conc_50257<- data_all_fam_conc[data_all_fam_conc$SITE_ID %in% c('50257'),] #SELECT SITE ALL PESTCIDE
+                      data_all_fam_conc_ACHE_50257 <- data_all_fam_conc_ACHE[data_all_fam_conc_ACHE$SITE_ID %in% c('50257'),] 
+                                                                                                            #SELECT SITE ALL PESTCIDE
+                      data_all_fam_conc_GABA_50257 <- data_all_fam_conc_GABA[data_all_fam_conc_GABA$SITE_ID %in% c('50257'),] 
+                                                                                                            #SELECT SITE ALL PESTCIDE
+                      
+                  
+                      
+                      #ALL pesticide 
+                      PLOT_50257 <- ggplot(data_all_fam_conc_50257, aes(x=MY.DATE1)) +  
+                        geom_point( aes(y=distinct_families), 
+                        size=0.5, color= "red") + geom_point (aes(y=mean*coeff), size=0.5, color = "blue") +
+                        geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                      geom_smooth(aes(y=mean*coeff),method="loess", col="blue") +
+                        scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic() +
+                        theme(axis.title.y = element_text(size=13),axis.title.y.right = element_text(size=13)) 
+                      
+                      #ACHE pesticide 
+                      PLOT_50257_ACHE <- ggplot(data_all_fam_conc_ACHE_50257, aes(x=MY.DATE1)) +  
+                        geom_point( aes(y=distinct_families), 
+                        size=0.5, color= "red") + geom_point (aes(y=mean*coeff2), size=0.5, color = "blue") +
+                        geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                      geom_smooth(aes(y=mean*coeff),method="loess", col="blue") +
+                        scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic()  +
+                        ggtitle("50257 ACHE") +
+                        xlab("Time") +
+                        theme(plot.title = element_text(size = 20, 
+                                                  face = "bold", hjust=0.5), axis.title.y = element_text(size=20, face= "bold"), axis.title.y.right = element_text(size=20, face= "bold", vjust=1), axis.title.x = element_text(size = 20, face = "bold")) + theme(text=element_text(size=20))
+                      
+                      #GABA pesticide
+                      PLOT_50257_GABA <- ggplot(data_all_fam_conc_GABA_50257, aes(x=MY.DATE1))+  
+                        geom_point( aes(y=distinct_families), 
+                        size=0.5, color= "red") + geom_point (aes(y=mean*coeff), size=0.5, color = "blue") +
+                        geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                      geom_smooth(aes(y=mean*coeff),method="loess", col="blue") + 
+                        scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic()  +
+                        ggtitle("50257 GABA") +
+                        xlab("Time") +
+                        theme(plot.title = element_text(size = 20, 
+                                                  face = "bold", hjust=0.5), axis.title.y = element_text(size=20, face= "bold"), axis.title.y.right = element_text(size=20, face= "bold", vjust=1), axis.title.x = element_text(size = 20, face = "bold")) + theme(text=element_text(size=20))
+                      
+                      #51097
+                #EXCEEDENCE of Parathion-methyl 
+                      #which the threshold conc based on lab data is very low 0.00031 µg/l
+
+                      
+                      data_all_fam_conc_51097<- data_all_fam_conc[data_all_fam_conc$SITE_ID %in% c('51097'),] #SELECT SITE ALL PESTCIDE
+                      data_all_fam_conc_ACHE_51097 <- data_all_fam_conc_ACHE[data_all_fam_conc_ACHE$SITE_ID %in% c('51097'),] 
+                                                                                                            #SELECT SITE ALL PESTCIDE
+                      data_all_fam_conc_GABA_51097 <- data_all_fam_conc_GABA[data_all_fam_conc_GABA$SITE_ID %in% c('51097'),] 
+                                                                                                            #SELECT SITE ALL PESTCIDE
+                      
+                 
+                      
+                      #ALL pesticide 
+                      PLOT_51097 <- ggplot(data_all_fam_conc_51097, aes(x=MY.DATE1)) +  
+                        geom_point( aes(y=distinct_families), 
+                        size=0.5, color= "red") + geom_point (aes(y=mean*coeff), size=0.5, color = "blue") +
+                        geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                      geom_smooth(aes(y=mean*coeff),method="loess", col="blue") +
+                        scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic() +
+                        theme(axis.title.y = element_text(size=13),axis.title.y.right = element_text(size=13)) 
+                      
+                      #ACHE pesticide 
+                      PLOT_51097_ACHE <- ggplot(data_all_fam_conc_ACHE_51097, aes(x=MY.DATE1)) +  
+                        geom_point( aes(y=distinct_families), 
+                        size=0.5, color= "red") + geom_point (aes(y=mean*coeff2), size=0.5, color = "blue") +
+                        geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                      geom_smooth(aes(y=mean*coeff),method="loess", col="blue") +
+                        scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic() +
+                        ggtitle("51097 ACHE") +
+                        xlab("Time") +
+                        theme(plot.title = element_text(size = 20, 
+                                                  face = "bold", hjust=0.5), axis.title.y = element_text(size=20, face= "bold"), axis.title.y.right = element_text(size=20, face= "bold", vjust=1), axis.title.x = element_text(size = 20, face = "bold")) + theme(text=element_text(size=20))
+                      
+                      #GABA pesticide
+                      PLOT_51097_GABA <- ggplot(data_all_fam_conc_GABA_51097, aes(x=MY.DATE1))+  
+                        geom_point( aes(y=distinct_families), 
+                        size=0.5, color= "red") + geom_point (aes(y=mean*coeff), size=0.5, color = "blue") +
+                        geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                      geom_smooth(aes(y=mean*coeff),method="loess", col="blue") + 
+                        scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic() +
+                        ggtitle("51097 GABA") +
+                        xlab("Time") +
+                        theme(plot.title = element_text(size = 20, 
+                                                  face = "bold", hjust=0.5), axis.title.y = element_text(size=20, face= "bold"), axis.title.y.right = element_text(size=20, face= "bold", vjust=1), axis.title.x = element_text(size = 20, face = "bold")) + theme(text=element_text(size=20))
+                      
+                      
+                      
+                        #51357
+                #EXCEEDENCE of Parathion-methyl 
+                      #which the threshold conc based on lab data is very low 0.00031 µg/l
+
+                      
+                      data_all_fam_conc_51357<- data_all_fam_conc[data_all_fam_conc$SITE_ID %in% c('51357'),] #SELECT SITE ALL PESTCIDE
+                      data_all_fam_conc_ACHE_51357 <- data_all_fam_conc_ACHE[data_all_fam_conc_ACHE$SITE_ID %in% c('51357'),] 
+                                                                                                            #SELECT SITE ALL PESTCIDE
+                      data_all_fam_conc_GABA_51357 <- data_all_fam_conc_GABA[data_all_fam_conc_GABA$SITE_ID %in% c('51357'),] 
+                                                                                                            #SELECT SITE ALL PESTCIDE
+                      
+
+                      #ALL pesticide 
+                      PLOT_51357 <- ggplot(data_all_fam_conc_51357, aes(x=MY.DATE1)) +  
+                        geom_point( aes(y=distinct_families), 
+                        size=0.5, color= "red") + geom_point (aes(y=mean*coeff), size=0.5, color = "blue") +
+                        geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                      geom_smooth(aes(y=mean*coeff),method="loess", col="blue") +
+                        scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic() +
+                        theme(axis.title.y = element_text(size=13),axis.title.y.right = element_text(size=13)) 
+                      
+                      #ACHE pesticide 
+                      PLOT_51357_ACHE <- ggplot(data_all_fam_conc_ACHE_51357, aes(x=MY.DATE1)) +  
+                        geom_point( aes(y=distinct_families), 
+                        size=0.5, color= "red") + geom_point (aes(y=mean*coeff), size=0.5, color = "blue") +
+                        geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                        #geom_smooth(aes(y=mean*coeff),method="loess", col="blue") +
+                        scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic()  +
+                        ggtitle("51357 ACHE") +
+                        xlab("Time") +
+                        theme(plot.title = element_text(size = 20, 
+                                                  face = "bold", hjust=0.5), axis.title.y = element_text(size=20, face= "bold"), axis.title.y.right = element_text(size=20, face= "bold", vjust=1), axis.title.x = element_text(size = 20, face = "bold")) + theme(text=element_text(size=20))
+                      
+                      #GABA pesticide
+                      PLOT_51357_GABA <- ggplot(data_all_fam_conc_GABA_51357, aes(x=MY.DATE1))+  
+                        geom_point( aes(y=distinct_families), 
+                        size=0.5, color= "red") + geom_point (aes(y=mean*coeff), size=0.5, color = "blue") +
+                        geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                      geom_smooth(aes(y=mean*coeff),method="loess", col="blue") + 
+                        scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic() +
+                        ggtitle("51357 GABA") +
+                        xlab("Time") +
+                        theme(plot.title = element_text(size = 20, 
+                                                  face = "bold", hjust=0.5), axis.title.y = element_text(size=20, face= "bold"), axis.title.y.right = element_text(size=20, face= "bold", vjust=1), axis.title.x = element_text(size = 20, face = "bold")) + theme(text=element_text(size=20))
+                      
+              #51392
+                #EXCEEDENCE of Phorate
+
+
+                      
+                      data_all_fam_conc_51392<- data_all_fam_conc[data_all_fam_conc$SITE_ID %in% c('51392'),] #SELECT SITE ALL PESTCIDE
+                      data_all_fam_conc_ACHE_51392 <- data_all_fam_conc_ACHE[data_all_fam_conc_ACHE$SITE_ID %in% c('51392'),] 
+                                                                                                            #SELECT SITE ALL PESTCIDE
+                      data_all_fam_conc_GABA_51392 <- data_all_fam_conc_GABA[data_all_fam_conc_GABA$SITE_ID %in% c('51392'),] 
+                                                                                                            #SELECT SITE ALL PESTCIDE
+                      
+                  
+                      
+                      #ALL pesticide 
+                      PLOT_51392 <- ggplot(data_all_fam_conc_51392, aes(x=MY.DATE1)) +  
+                        geom_point( aes(y=distinct_families), 
+                        size=0.5, color= "red") + geom_point (aes(y=mean*coeff), size=0.5, color = "blue") +
+                        geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                      #geom_smooth(aes(y=mean*coeff),method="loess", col="blue") +
+                        scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic() +
+                        theme(axis.title.y = element_text(size=13),axis.title.y.right = element_text(size=13)) 
+                      
+                      #ACHE pesticide 
+                      PLOT_51392_ACHE <- ggplot(data_all_fam_conc_ACHE_51392, aes(x=MY.DATE1)) +  
+                        geom_point( aes(y=distinct_families), 
+                        size=0.5, color= "red") + geom_point (aes(y=mean*coeff), size=0.5, color = "blue") +
+                        geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                        geom_smooth(aes(y=mean*coeff),method="loess", col="blue") +
+                        scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic() +
+                        ggtitle("51392 ACHE") +
+                        xlab("Time") +
+                        theme(plot.title = element_text(size = 20, 
+                                                  face = "bold", hjust=0.5), axis.title.y = element_text(size=20, face= "bold"), axis.title.y.right = element_text(size=20, face= "bold", vjust=1), axis.title.x = element_text(size = 20, face = "bold")) + theme(text=element_text(size=20))
+                      
+                      
+                      #GABA pesticide
+                      PLOT_51392_GABA <- ggplot(data_all_fam_conc_GABA_51392, aes(x=MY.DATE1))+  
+                        geom_point( aes(y=distinct_families), 
+                        size=0.5, color= "red") + geom_point (aes(y=mean*coeff), size=0.5, color = "blue") +
+                        geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                      geom_smooth(aes(y=mean*coeff),method="loess", col="blue") + 
+                        scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic() +
+                        ggtitle("51392 GABA") +
+                        xlab("Time") +
+                        theme(plot.title = element_text(size = 20, 
+                                                  face = "bold", hjust=0.5), axis.title.y = element_text(size=20, face= "bold"), axis.title.y.right = element_text(size=20, face= "bold", vjust=1), axis.title.x = element_text(size = 20, face = "bold")) + theme(text=element_text(size=20))
+                      
+                      
+                      
+                  #51634
+                #EXCEEDENCE of Dichlorvos
+
+
+                      
+                      data_all_fam_conc_51634 <- data_all_fam_conc[data_all_fam_conc$SITE_ID %in% c('51634'),] #SELECT SITE ALL PESTCIDE
+                      data_all_fam_conc_ACHE_51634 <- data_all_fam_conc_ACHE[data_all_fam_conc_ACHE$SITE_ID %in% c('51634'),] 
+                                                                                                            #SELECT SITE ALL PESTCIDE
+                      data_all_fam_conc_GABA_51634 <- data_all_fam_conc_GABA[data_all_fam_conc_GABA$SITE_ID %in% c('51634'),] 
+                                                                                                            #SELECT SITE ALL PESTCIDE
+                      
+
+                      #ALL pesticide 
+                      PLOT_51634 <- ggplot(data_all_fam_conc_51634, aes(x=MY.DATE1)) +  
+                        geom_point( aes(y=distinct_families), 
+                        size=0.5, color= "red") + geom_point (aes(y=mean*coeff), size=0.5, color = "blue") +
+                        geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                      #geom_smooth(aes(y=mean*coeff),method="loess", col="blue") +
+                        scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic() +
+                        theme(axis.title.y = element_text(size=13),axis.title.y.right = element_text(size=13)) 
+                      
+                      #ACHE pesticide 
+                      PLOT_51634_ACHE <- ggplot(data_all_fam_conc_ACHE_51634, aes(x=MY.DATE1)) +  
+                        geom_point( aes(y=distinct_families), 
+                        size=0.5, color= "red") + geom_point (aes(y=mean*coeff), size=0.5, color = "blue") +
+                        geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                        geom_smooth(aes(y=mean*coeff),method="loess", col="blue") +
+                        scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic() +
+                        ggtitle("51634 ACHE") +
+                        xlab("Time") +
+                        theme(plot.title = element_text(size = 20, 
+                                                  face = "bold", hjust=0.5), axis.title.y = element_text(size=20, face= "bold"), axis.title.y.right = element_text(size=20, face= "bold", vjust=1), axis.title.x = element_text(size = 20, face = "bold")) + theme(text=element_text(size=20))
+                      
+                      #GABA pesticide
+                      PLOT_51634_GABA <- ggplot(data_all_fam_conc_GABA_51634, aes(x=MY.DATE1))+  
+                        geom_point( aes(y=distinct_families), 
+                        size=0.5, color= "red") + geom_point (aes(y=mean*coeff), size=0.5, color = "blue") +
+                        geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                      geom_smooth(aes(y=mean*coeff),method="loess", col="blue") + 
+                        scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic() +
+                        ggtitle("51634 GABA") +
+                        xlab("Time") +
+                        theme(plot.title = element_text(size = 20, 
+                                                  face = "bold", hjust=0.5), axis.title.y = element_text(size=20, face= "bold"), axis.title.y.right = element_text(size=20, face= "bold", vjust=1), axis.title.x = element_text(size = 20, face = "bold")) + theme(text=element_text(size=20))
+                      
+                      
+             #53594
+                #EXCEEDENCE of Parathion-methyl, Dichlorvos, Fipronil, Diazinon
+                      coeff=100
+                      
+                      data_all_fam_conc_53594 <- data_all_fam_conc[data_all_fam_conc$SITE_ID %in% c('53594'),] #SELECT SITE ALL PESTCIDE
+                      data_all_fam_conc_ACHE_53594 <- data_all_fam_conc_ACHE[data_all_fam_conc_ACHE$SITE_ID %in% c('53594'),] 
+                                                                                                            #SELECT SITE ALL PESTCIDE
+                      data_all_fam_conc_GABA_53594 <- data_all_fam_conc_GABA[data_all_fam_conc_GABA$SITE_ID %in% c('53594'),] 
+                                                                                                            #SELECT SITE ALL PESTCIDE
+                      
+                  coeff2 = 10
+                      
+                      #ALL pesticide 
+                      PLOT_53594 <- ggplot(data_all_fam_conc_53594, aes(x=MY.DATE1)) +  
+                        geom_point( aes(y=distinct_families), 
+                        size=0.5, color= "red") + geom_point (aes(y=mean*coeff), size=0.5, color = "blue") +
+                        geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                      geom_smooth(aes(y=mean*coeff),method="loess", col="blue") +
+                        scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic() +
+                        theme(axis.title.y = element_text(size=13),axis.title.y.right = element_text(size=13)) 
+
+                      #ACHE pesticide 
+                      PLOT_53594_ACHE <- ggplot(data_all_fam_conc_ACHE_53594, aes(x=MY.DATE1)) +  
+                        geom_point( aes(y=distinct_families), 
+                        size=0.5, color= "red") + geom_point (aes(y=mean*coeff), size=0.5, color = "blue") +
+                        geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                        geom_smooth(aes(y=mean*coeff),method="loess", col="blue") +
+                        scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic() +
+                        ggtitle("Site 1 ACHE") +
+                        xlab("Time") +
+                        theme(plot.title = element_text(size = 20, 
+                                                  face = "bold", hjust=0.5), axis.title.y = element_text(size=20, face= "bold"), axis.title.y.right = element_text(size=20, face= "bold", vjust=1), axis.title.x = element_text(size = 20, face = "bold")) + theme(text=element_text(size=20))
+                        ggsave(PLOT_53594_ACHE, file=("PLOT 53594 ACHE.png"), width = 14, height = 20, units = "cm", dpi=300)
+coeff = 100
+                      
+                      #GABA pesticide
+                      PLOT_53594_GABA <- ggplot(data_all_fam_conc_GABA_53594, aes(x=MY.DATE1))+  
+                        geom_point( aes(y=distinct_families), 
+                        size=0.5, color= "red") + geom_point (aes(y=mean*coeff), size=0.5, color = "blue") +
+                        geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                      geom_smooth(aes(y=mean*coeff),method="loess", col="blue") + 
+                        scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic() +
+                        ggtitle("Site 1 GABA") +
+                        xlab("Time") +
+                        theme(plot.title = element_text(size = 20, 
+                                                  face = "bold", hjust=0.5), axis.title.y = element_text(size=20, face= "bold"), axis.title.y.right = element_text(size=20, face= "bold", vjust=1), axis.title.x = element_text(size = 20, face = "bold")) + theme(text=element_text(size=20))
+
+                      
+                      
+             #53846
+                #EXCEEDENCE of Diazinon Parathion-methyl
+
+                      
+                      data_all_fam_conc_53846 <- data_all_fam_conc[data_all_fam_conc$SITE_ID %in% c('53846'),] #SELECT SITE ALL PESTCIDE
+                      data_all_fam_conc_ACHE_53846 <- data_all_fam_conc_ACHE[data_all_fam_conc_ACHE$SITE_ID %in% c('53846'),] 
+                                                                                                            #SELECT SITE ALL PESTCIDE
+                      data_all_fam_conc_GABA_53846 <- data_all_fam_conc_GABA[data_all_fam_conc_GABA$SITE_ID %in% c('53846'),] 
+                                                                                                            #SELECT SITE ALL PESTCIDE
+                      
+                  coeff2 = 10
+                      
+                      #ALL pesticide 
+                      PLOT_53846 <- ggplot(data_all_fam_conc_53846, aes(x=MY.DATE1)) +  
+                        geom_point( aes(y=distinct_families), 
+                        size=0.5, color= "red") + geom_point (aes(y=mean*coeff), size=0.5, color = "blue") +
+                        geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                      geom_smooth(aes(y=mean*coeff),method="loess", col="blue") +
+                        scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic() +
+                        theme(axis.title.y = element_text(size=13),axis.title.y.right = element_text(size=13)) 
+                      
+                      
+                      #ACHE pesticide 
+                      PLOT_53846_ACHE <- ggplot(data_all_fam_conc_ACHE_53846, aes(x=MY.DATE1)) +  
+                        geom_point( aes(y=distinct_families), 
+                        size=0.5, color= "red") + geom_point (aes(y=mean*coeff), size=0.5, color = "blue") +
+                        geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                        geom_smooth(aes(y=mean*coeff),method="loess", col="blue") +
+                        scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic() +
+                        theme(axis.title.y = element_text(size=13),axis.title.y.right = element_text(size=13)) +
+                        ggtitle("Site 53846 ACHE") +
+                        xlab("Time") +
+                        theme(plot.title = element_text(size = 20, 
+                                                  face = "bold", hjust=0.5), axis.title.y = element_text(size=20, face= "bold"), axis.title.y.right = element_text(size=20, face= "bold", vjust=1), axis.title.x = element_text(size = 20, face = "bold")) + theme(text=element_text(size=20))
+                      coeff= 1000
+                      #GABA pesticide
+                      PLOT_53846_GABA <- ggplot(data_all_fam_conc_GABA_53846, aes(x=MY.DATE1))+  
+                        geom_point( aes(y=distinct_families), 
+                        size=0.5, color= "red") + geom_point (aes(y=mean*coeff), size=0.5, color = "blue") +
+                        geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                      geom_smooth(aes(y=mean*coeff),method="loess", col="blue") + 
+                        scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic() +
+                        theme(axis.title.y = element_text(size=13),axis.title.y.right = element_text(size=13)) +
+                        ggtitle("Site 53846 GABA") +
+                        xlab("Time") +
+                        theme(plot.title = element_text(size = 20, 
+                                                  face = "bold", hjust=0.5), axis.title.y = element_text(size=20, face= "bold"), axis.title.y.right = element_text(size=20, face= "bold", vjust=1), axis.title.x = element_text(size = 20, face = "bold")) + theme(text=element_text(size=20))
+                      
+        
+             #55006
+                #EXCEEDENCE of 
+                      
+                      data_all_fam_conc_55006 <- data_all_fam_conc[data_all_fam_conc$SITE_ID %in% c('55006'),] #SELECT SITE ALL PESTCIDE
+                      data_all_fam_conc_ACHE_55006 <- data_all_fam_conc_ACHE[data_all_fam_conc_ACHE$SITE_ID %in% c('55006'),] 
+                                                                                                            #SELECT SITE ALL PESTCIDE
+                      data_all_fam_conc_GABA_55006 <- data_all_fam_conc_GABA[data_all_fam_conc_GABA$SITE_ID %in% c('55006'),] 
+                                                                                                            #SELECT SITE ALL PESTCIDE
+                      
+
+                      #ALL pesticide 
+                      PLOT_55006 <- ggplot(data_all_fam_conc_55006, aes(x=MY.DATE1)) +  
+                        geom_point( aes(y=distinct_families), 
+                        size=0.5, color= "red") + geom_point (aes(y=mean*coeff), size=0.5, color = "blue") +
+                        geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                      geom_smooth(aes(y=mean*coeff),method="loess", col="blue") +
+                        scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic()  +
+                        theme(axis.title.y = element_text(size=13),axis.title.y.right = element_text(size=13)) +
+                        ggtitle("Site 53846 ACHE") +
+                        xlab("Time") +
+                        theme(plot.title = element_text(size = 20, 
+                                                  face = "bold", hjust=0.5), axis.title.y = element_text(size=20, face= "bold"), axis.title.y.right = element_text(size=20, face= "bold", vjust=1), axis.title.x = element_text(size = 20, face = "bold")) + theme(text=element_text(size=20))
+                      
+                      #ACHE pesticide 
+                      PLOT_55006_ACHE <- ggplot(data_all_fam_conc_ACHE_55006, aes(x=MY.DATE1)) +  
+                        geom_point( aes(y=distinct_families), 
+                        size=0.5, color= "red") + geom_point (aes(y=mean*coeff), size=0.5, color = "blue") +
+                        geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                        geom_smooth(aes(y=mean*coeff),method="loess", col="blue") +
+                        scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic()  +
+                        theme(axis.title.y = element_text(size=13),axis.title.y.right = element_text(size=13)) +
+                        ggtitle("Site 55006 ACHE") +
+                        xlab("Time") +
+                        theme(plot.title = element_text(size = 20, 
+                                                  face = "bold", hjust=0.5), axis.title.y = element_text(size=20, face= "bold"), axis.title.y.right = element_text(size=20, face= "bold", vjust=1), axis.title.x = element_text(size = 20, face = "bold")) + theme(text=element_text(size=20))
+                      
+                      #GABA pesticide
+                      PLOT_55006_GABA <- ggplot(data_all_fam_conc_GABA_55006, aes(x=MY.DATE1))+  
+                        geom_point( aes(y=distinct_families), 
+                        size=0.5, color= "red") + geom_point (aes(y=mean*coeff), size=0.5, color = "blue") +
+                        geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                      geom_smooth(aes(y=mean*coeff),method="loess", col="blue") + 
+                        scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic() +
+                        theme(axis.title.y = element_text(size=13),axis.title.y.right = element_text(size=13))   +
+                        ggtitle("Site 55006 GABA") +
+                        xlab("Time") +
+                        theme(plot.title = element_text(size = 20, 
+                                                  face = "bold", hjust=0.5), axis.title.y = element_text(size=20, face= "bold"), axis.title.y.right = element_text(size=20, face= "bold", vjust=1), axis.title.x = element_text(size = 20, face = "bold")) + theme(text=element_text(size=20))
+                                  
+                      
+                      
+                        
+             #55088
+                #EXCEEDENCE of 
+                      
+                      data_all_fam_conc_55088 <- data_all_fam_conc[data_all_fam_conc$SITE_ID %in% c('55088'),] #SELECT SITE ALL PESTCIDE
+                      data_all_fam_conc_ACHE_55088<- data_all_fam_conc_ACHE[data_all_fam_conc_ACHE$SITE_ID %in% c('55088'),] 
+                                                                                                            #SELECT SITE ALL PESTCIDE
+                      data_all_fam_conc_GABA_55088 <- data_all_fam_conc_GABA[data_all_fam_conc_GABA$SITE_ID %in% c('55088'),] 
+                                                                                                            #SELECT SITE ALL PESTCIDE
+                      
+
+                      #ALL pesticide 
+                      PLOT_55088 <- ggplot(data_all_fam_conc_55088, aes(x=MY.DATE1)) +  
+                        geom_point( aes(y=distinct_families), 
+                        size=0.5, color= "red") + geom_point (aes(y=mean*coeff), size=0.5, color = "blue") +
+                        geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                      geom_smooth(aes(y=mean*coeff),method="loess", col="blue") +
+                        scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic() +
+                        theme(axis.title.y = element_text(size=13),axis.title.y.right = element_text(size=13)) 
+                      
+                      #ACHE pesticide 
+                      PLOT_55088_ACHE <- ggplot(data_all_fam_conc_ACHE_55088, aes(x=MY.DATE1)) +  
+                        geom_point( aes(y=distinct_families), 
+                        size=0.5, color= "red") + geom_point (aes(y=mean*coeff), size=0.5, color = "blue") +
+                        geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                        geom_smooth(aes(y=mean*coeff),method="loess", col="blue") +
+                        scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic()  +
+                        ggtitle("Site 55088 ACHE") +
+                        xlab("Time") +
+                        theme(plot.title = element_text(size = 20, 
+                                                  face = "bold", hjust=0.5), axis.title.y = element_text(size=20, face= "bold"), axis.title.y.right = element_text(size=20, face= "bold", vjust=1), axis.title.x = element_text(size = 20, face = "bold")) + theme(text=element_text(size=20))
+                      
+        
+                      
+                      #GABA pesticide
+                      PLOT_55088_GABA <- ggplot(data_all_fam_conc_GABA_55088, aes(x=MY.DATE1))+  
+                        geom_point( aes(y=distinct_families), 
+                        size=0.5, color= "red") + geom_point (aes(y=mean*coeff), size=0.5, color = "blue") +
+                        geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                      geom_smooth(aes(y=mean*coeff),method="loess", col="blue") + 
+                        scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic()  +
+                        ggtitle("Site 55088 GABA") +
+                        xlab("Time") +
+                        theme(plot.title = element_text(size = 20, 
+                                                  face = "bold", hjust=0.5), axis.title.y = element_text(size=20, face= "bold"), axis.title.y.right = element_text(size=20, face= "bold", vjust=1), axis.title.x = element_text(size = 20, face = "bold")) + theme(text=element_text(size=20))
+                      
+        
+                      
+                      
+                      
+              #55436
+                #EXCEEDENCE of 
+                      
+                      data_all_fam_conc_55436 <- data_all_fam_conc[data_all_fam_conc$SITE_ID %in% c('55436'),] #SELECT SITE ALL PESTCIDE
+                      data_all_fam_conc_ACHE_55436<- data_all_fam_conc_ACHE[data_all_fam_conc_ACHE$SITE_ID %in% c('55436'),] 
+                                                                                                            #SELECT SITE ALL PESTCIDE
+                      data_all_fam_conc_GABA_55436 <- data_all_fam_conc_GABA[data_all_fam_conc_GABA$SITE_ID %in% c('55436'),] 
+                                                                                                            #SELECT SITE ALL PESTCIDE
+                      
+
+                      #ALL pesticide 
+                      PLOT_55436 <- ggplot(data_all_fam_conc_55436, aes(x=MY.DATE1)) +  
+                        geom_point( aes(y=distinct_families), 
+                        size=0.5, color= "red") + geom_point (aes(y=mean*coeff), size=0.5, color = "blue") +
+                        geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                      geom_smooth(aes(y=mean*coeff),method="loess", col="blue") +
+                        scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic() +
+                        theme(axis.title.y = element_text(size=13),axis.title.y.right = element_text(size=13)) 
+                      
+                      #ACHE pesticide 
+                      PLOT_55436_ACHE <- ggplot(data_all_fam_conc_ACHE_55436, aes(x=MY.DATE1)) +  
+                        geom_point( aes(y=distinct_families), 
+                        size=0.5, color= "red") + geom_point (aes(y=mean*coeff), size=0.5, color = "blue") +
+                        geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                        geom_smooth(aes(y=mean*coeff),method="loess", col="blue") +
+                        scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic()  +
+                        ggtitle("Site 55436 ACHE") +
+                        xlab("Time") +
+                        theme(plot.title = element_text(size = 20, 
+                                                  face = "bold", hjust=0.5), axis.title.y = element_text(size=20, face= "bold"), axis.title.y.right = element_text(size=20, face= "bold", vjust=1), axis.title.x = element_text(size = 20, face = "bold")) + theme(text=element_text(size=20))
+                      
+                      
+                      #GABA pesticide
+                      PLOT_55436_GABA <- ggplot(data_all_fam_conc_GABA_55436, aes(x=MY.DATE1))+  
+                        geom_point( aes(y=distinct_families), 
+                        size=0.5, color= "red") + geom_point (aes(y=mean*coeff), size=0.5, color = "blue") +
+                        geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                      geom_smooth(aes(y=mean*coeff),method="loess", col="blue") + 
+                        scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic()  +
+                        ggtitle("Site 55436 GABA") +
+                        xlab("Time") +
+                        theme(plot.title = element_text(size = 20, 
+                                                  face = "bold", hjust=0.5), axis.title.y = element_text(size=20, face= "bold"), axis.title.y.right = element_text(size=20, face= "bold", vjust=1), axis.title.x = element_text(size = 20, face = "bold")) + theme(text=element_text(size=20))
+                      
+                      
+                      
+                      
+         #55833
+                #EXCEEDENCE of 
+                      
+                      data_all_fam_conc_55833 <- data_all_fam_conc[data_all_fam_conc$SITE_ID %in% c('55833'),] #SELECT SITE ALL PESTCIDE
+                      data_all_fam_conc_ACHE_55833<- data_all_fam_conc_ACHE[data_all_fam_conc_ACHE$SITE_ID %in% c('55833'),] 
+                                                                                                            #SELECT SITE ALL PESTCIDE
+                      data_all_fam_conc_GABA_55833 <- data_all_fam_conc_GABA[data_all_fam_conc_GABA$SITE_ID %in% c('55833'),] 
+                                                                                                            #SELECT SITE ALL PESTCIDE
+                      
+                  
+                      
+                      #ALL pesticide 
+                      PLOT_55833 <- ggplot(data_all_fam_conc_55833, aes(x=MY.DATE1)) +  
+                        geom_point( aes(y=distinct_families), 
+                        size=0.5, color= "red") + geom_point (aes(y=mean*coeff), size=0.5, color = "blue") +
+                        geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                      geom_smooth(aes(y=mean*coeff),method="loess", col="blue") +
+                        scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic() +
+                        theme(axis.title.y = element_text(size=13),axis.title.y.right = element_text(size=13)) 
+                      
+                      #ACHE pesticide 
+                      PLOT_55833_ACHE <- ggplot(data_all_fam_conc_ACHE_55833, aes(x=MY.DATE1)) +  
+                        geom_point( aes(y=distinct_families), 
+                        size=0.5, color= "red") + geom_point (aes(y=mean*coeff), size=0.5, color = "blue") +
+                        geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                        geom_smooth(aes(y=mean*coeff),method="loess", col="blue") +
+                        scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic()  +
+                        ggtitle("Site 55833 ACHE") +
+                        xlab("Time") +
+                        theme(plot.title = element_text(size = 20, 
+                                                  face = "bold", hjust=0.5), axis.title.y = element_text(size=20, face= "bold"), axis.title.y.right = element_text(size=20, face= "bold", vjust=1), axis.title.x = element_text(size = 20, face = "bold")) + theme(text=element_text(size=20))
+                      
+                      
+                      #GABA pesticide
+                      PLOT_55833_GABA <- ggplot(data_all_fam_conc_GABA_55833, aes(x=MY.DATE1))+  
+                        geom_point( aes(y=distinct_families), 
+                        size=0.5, color= "red") + geom_point (aes(y=mean*coeff), size=0.5, color = "blue") +
+                        geom_smooth(aes(y=distinct_families), method="loess", col="red") +
+                      geom_smooth(aes(y=mean*coeff),method="loess", col="blue") + 
+                        scale_y_continuous(
+                        # Features of the first axis
+                        name = "Family richness",
+                        # Add a second axis and specify its features
+                        sec.axis = sec_axis(trans=~., name="Mean concentration*Coeff (µg/l)")) + theme_classic()  +
+                        ggtitle("Site 55833 GABA") +
+                        xlab("Time") +
+                        theme(plot.title = element_text(size = 20, 
+                                                  face = "bold", hjust=0.5), axis.title.y = element_text(size=20, face= "bold"), axis.title.y.right = element_text(size=20, face= "bold", vjust=1), axis.title.x = element_text(size = 20, face = "bold")) + theme(text=element_text(size=20))
+                      
+                      
+                      
+                      
+                      ggsave(PLOT_53594_ACHE, file=("PLOT 53594 ACHE.png"), height = 8, width =10)
+ggsave(PLOT_53594_GABA, file=("PLOT 53594 GABA.png"), height = 8, width =10)
+ggsave(PLOT_53846_ACHE, file=("PLOT 53846 ACHE.png"), height = 8, width =10)
+ggsave(PLOT_53846_GABA, file=("PLOT 53846 GABA.png"), height = 8, width =10)
+ggsave(PLOT_55006_ACHE, file=("PLOT 55006 ACHE.png"), height = 8, width =10)
+ggsave(PLOT_55006_GABA, file=("PLOT 55006 GABA.png"), height = 8, width =10)
+ggsave(PLOT_55088_ACHE, file=("PLOT 55088 ACHE.png"), height = 8, width =10)
+ggsave(PLOT_55088_GABA, file=("PLOT 55088 GABA.png"), height = 8, width =10)
+ggsave(PLOT_55436_ACHE, file=("PLOT 55436 ACHE.png"), height = 8, width =10)
+ggsave(PLOT_55436_GABA, file=("PLOT 55436 GABA.png"), height = 8, width =10)
+ggsave(PLOT_55833_ACHE, file=("PLOT 55833 ACHE.png"), height = 8, width =10)
+ggsave(PLOT_55833_GABA, file=("PLOT 55833 GABA.png"), height = 8, width =10)
+ggsave(PLOT_51634_ACHE, file=("PLOT 51634 ACHE.png"), height = 8, width =10)
+ggsave(PLOT_51634_GABA, file=("PLOT 51634 GABA.png"), height = 8, width =10)
+ggsave(PLOT_51392_ACHE, file=("PLOT 51392 ACHE.png"), height = 8, width =10)
+ggsave(PLOT_51392_GABA, file=("PLOT 51392 GABA.png"), height = 8, width =10)
+ggsave(PLOT_51357_ACHE, file=("PLOT 51357 ACHE.png"), height = 8, width =10)
+ggsave(PLOT_51357_GABA, file=("PLOT 51357 GABA.png"), height = 8, width =10)
+ggsave(PLOT_51097_ACHE, file=("PLOT 51097 ACHE.png"), height = 8, width =10)
+ggsave(PLOT_51097_GABA, file=("PLOT 51097 GABA.png"), height = 8, width =10)
+ggsave(PLOT_50257_ACHE, file=("PLOT 50257 ACHE.png"), height = 8, width =10)
+ggsave(PLOT_50257_GABA, file=("PLOT 50257 GABA.png"), height = 8, width =10)
+ggsave(PLOT_50139_ACHE, file=("PLOT 50139 ACHE.png"), height = 8, width =10)
+ggsave(PLOT_50139_GABA, file=("PLOT 50139 GABA.png"), height = 8, width =10)
+ggsave(PLOT_50031_ACHE, file=("PLOT 50031 ACHE.png"), height = 8, width =10)
+ggsave(PLOT_50031_GABA, file=("PLOT 50031 GABA.png"), height = 8, width =10)
+ggsave(PLOT_50020_ACHE, file=("PLOT 50020 ACHE.png"), height = 8, width =10)
+ggsave(PLOT_50020_GABA, file=("PLOT 50020 GABA.png"), height = 8, width =10)
+ggsave(PLOT_49881_ACHE, file=("PLOT 49881 ACHE.png"), height = 8, width =10)
+ggsave(PLOT_49881_GABA, file=("PLOT 49881 GABA.png"), height = 8, width =10)
+ggsave(PLOT_48583_ACHE, file=("PLOT 48583 ACHE.png"), height = 8, width =10)
+ggsave(PLOT_48583_GABA, file=("PLOT 48583 GABA.png"), height = 8, width =10)
+ggsave(PLOT_47255_ACHE, file=("PLOT 47255 ACHE.png"), height = 8, width =10)
+ggsave(PLOT_47255_GABA, file=("PLOT 47255 GABA.png"), height = 8, width =10)
+ggsave(PLOT_47138_ACHE, file=("PLOT 47138 ACHE.png"), height = 8, width =10)
+ggsave(PLOT_47138_GABA, file=("PLOT 47138 GABA.png"), height = 8, width =10)
+                      
+                      
+```
+#Samples per month by chemical at site 1
+```{r}
+GABA_ACHE_SITE1
+categories <- unique(GABA_ACHE_SITE1$determinand_definition)
+
+  # Loop through each value in determinand.definition
+result <- GABA_ACHE_SITE1 %>%
+  group_by(determinand_definition, MONTH) %>%
+  summarize(occurrences = n())
+
+
+# Get unique determinand.definitions
+unique_determinands <- unique(result$determinand_definition)
+# Create a list to store plots
+plot_list <- list()
+
+#Oder by month
+month_order <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+
+# Loop through each determinand.definition
+for (determinand in unique_determinands) {
+  # Filter data based on the current determinand.definition
+  # Filter data based on the current determinand.definition
+  filtered_data <- subset(result, determinand_definition == determinand)
+  filtered_data$MONTH <- factor(filtered_data$MONTH, levels = month_order, ordered = TRUE)
+    filtered_data <- na.omit(filtered_data)
+
+  # Create a bar plot using ggplot2
+  p <- ggplot(filtered_data, aes(x = MONTH, y = occurrences, fill = MONTH)) +
+    geom_bar(stat = "identity") +
+    labs(title = paste("", determinand),
+         x = "Month",
+         y = "Occurrences") +
+    theme(legend.position = "none") +
+    theme(plot.title = element_text(size = 32, face = "bold", hjust = 0.5),
+          axis.title.x = element_text(size = 18, face = "bold"),
+          axis.title.y = element_text(size = 18, face = "bold"),  axis.text.x = element_text(size = 14), axis.text.y = element_text(size = 14)) 
+  
+  # Store the plot in the list
+  plot_list[[determinand]] <- p
+}
+
+# Print each plot from the list
+for (determinand in unique_determinands) {
+  print(plot_list[[determinand]])
+  
+  filename <- paste("figures/", determinand, ".png", sep = "")
+  ggsave(filename, dpi = 330)
+  
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```
+
+#Family richness vs pesticide concentrations over time
+```{r}
+
+anglaindataMOA
+midlandsdataMOA
+
+#Anglian
+    ##By Site -ACHE
+    SITE_IDs = unique(anglaindataMOA$SITE_ID)
+    anglaindataMOA_pest_rich_plots = list()
+    
+    for(SITE_ID_ in SITE_IDs) {
+      
+      anglaindataMOA_pest_rich_plots[[SITE_ID_]] = ggplot(anglaindataMOA %>% filter(SITE_ID == SITE_ID_), aes(x=AChE, y=distinctfamilies)) + geom_point() + theme(axis.text.x = element_text(angle = 90)) + ylab("Family richness") + xlab("Concentration (µg/l)") + geom_smooth(method = "lm", se = FALSE) + theme_bw() + theme(plot.title = element_text(size = 32, face = "bold", hjust=0.5), axis.title.x = element_text(size = 18, face = "bold"), axis.title.y = element_text(size = 18, face = "bold")) + scale_y_continuous(trans='log10') + scale_x_continuous(trans='log10') 
+      
+      print(anglaindataMOA_pest_rich_plots[[SITE_ID_]])
+      #ggsave(anglaindataMOA_pest_rich_plots[[SITE_ID_]], file=paste0("plot_", SITE_ID_," AChE Angalian.png"), dpi=300)
+    }
+    
+        ##By Site -GABA
+    SITE_IDs = unique(anglaindataMOA$SITE_ID)
+    anglaindataMOA_pest_rich_plots = list()
+    
+    for(SITE_ID_ in SITE_IDs) {
+      
+      anglaindataMOA_pest_rich_plots[[SITE_ID_]] = ggplot(anglaindataMOA %>% filter(SITE_ID == SITE_ID_), aes(x=GABA_receptor, y=distinctfamilies)) + geom_point() + theme(axis.text.x = element_text(angle = 90)) + ylab("Family richness") + xlab("Concentration (µg/l)")  + theme_bw() + theme(plot.title = element_text(size = 32, face = "bold", hjust=0.5), axis.title.x = element_text(size = 18, face = "bold"), axis.title.y = element_text(size = 18, face = "bold")) + scale_y_continuous(trans='log10') + scale_x_continuous(trans='log10') 
+      print(anglaindataMOA_pest_rich_plots[[SITE_ID_]])
+      #ggsave(anglaindataMOA_pest_rich_plots[[SITE_ID_]], file=paste0("plot_", SITE_ID_," GABA Angalian.png"), dpi=300)
+    }
+    
+#Midland
+
+##By Site - ACHE
+SITE_IDs = unique(midlandsdataMOA$SITE_ID)
+midlandsdataMOA_pest_rich_plots = list()
+
+for(SITE_ID_ in SITE_IDs) {
+  
+  midlandsdataMOA_pest_rich_plots[[SITE_ID_]] = ggplot(midlandsdataMOA %>% filter(SITE_ID == SITE_ID_), aes(x=AChE, y=distinct_families)) + geom_point() + theme(axis.text.x = element_text(angle = 90)) + ylab("Family richness") + xlab("Concentration (µg/l)")  + theme_bw() + theme(plot.title = element_text(size = 32, face = "bold", hjust=0.5), axis.title.x = element_text(size = 18, face = "bold"), axis.title.y = element_text(size = 18, face = "bold")) + scale_y_continuous(trans='log10') + scale_x_continuous(trans='log10') 
+  
+  print(midlandsdataMOA_pest_rich_plots[[SITE_ID_]])
+  ggsave(midlandsdataMOA_pest_rich_plots[[SITE_ID_]], file=paste0("plot_", SITE_ID_," AChE Midland.png"), dpi=300)
+}
+    
+
+##By Site - GABA
+SITE_IDs = unique(midlandsdataMOA$SITE_ID)
+midlandsdataMOA_pest_rich_plots = list()
+
+for(SITE_ID_ in SITE_IDs) {
+  
+  midlandsdataMOA_pest_rich_plots[[SITE_ID_]] = ggplot(midlandsdataMOA %>% filter(SITE_ID == SITE_ID_), aes(x=GABA_receptor, y=distinct_families)) + geom_point() + theme(axis.text.x = element_text(angle = 90)) + ylab("Family richness") + xlab("Concentration (µg/l)") + theme_bw() + theme(plot.title = element_text(size = 32, face = "bold", hjust=0.5), axis.title.x = element_text(size = 18, face = "bold"), axis.title.y = element_text(size = 18, face = "bold")) + scale_y_continuous(trans='log10') + scale_x_continuous(trans='log10') 
+  
+  print(midlandsdataMOA_pest_rich_plots[[SITE_ID_]])
+  ggsave(midlandsdataMOA_pest_rich_plots[[SITE_ID_]], file=paste0("plot_", SITE_ID_," GABA Midland.png"), dpi=300)
+}
+    
+
+#FINAL PLOTS
+      #ANGLIAN
+      ACHE_ANG<- ggplot(anglaindataMOA, aes(x=AChE, y=distinctfamilies)) + geom_point() + theme(axis.text.x = element_text(angle = 90)) + ylab("Family richness") + xlab("Concentration (µg/l)") + theme(plot.title = element_text(size = 32, face = "bold", hjust=0.5), axis.title.x = element_text(size = 18, face = "bold"), axis.title.y = element_text(size = 18, face = "bold")) + scale_y_continuous(trans='log10') + scale_x_continuous(trans='log10') + facet_wrap(~SITE_ID)
+      ggsave(ACHE_ANG, file=("plot_Anglia_ACHE.png"), height = 20, width = 12, dpi=300)
+      
+      GABA_ANG<- ggplot(anglaindataMOA, aes(x=GABA_receptor, y=distinctfamilies)) + geom_point() + theme(axis.text.x = element_text(angle = 90)) + ylab("Family richness") + xlab("Concentration (µg/l)") + theme(plot.title = element_text(size = 32, face = "bold", hjust=0.5), axis.title.x = element_text(size = 18, face = "bold"), axis.title.y = element_text(size = 18, face = "bold")) + scale_y_continuous(trans='log10') + scale_x_continuous(trans='log10') + facet_wrap(~SITE_ID)
+      ggsave(GABA_ANG, file=("plot_Anglia_GABA.png"), height = 20, width = 12, dpi=300)
+      
+      #MIDLANDS
+       ACHE_Midland<- ggplot(midlandsdataMOA, aes(x=AChE, y=distinct_families)) + geom_point() + theme(axis.text.x = element_text(angle = 90)) + ylab("Family richness") + xlab("Concentration (µg/l)") + theme(plot.title = element_text(size = 32, face = "bold", hjust=0.5), axis.title.x = element_text(size = 18, face = "bold"), axis.title.y = element_text(size = 18, face = "bold")) + scale_y_continuous(trans='log10') + scale_x_continuous(trans='log10') + facet_wrap(~SITE_ID)
+      ggsave(ACHE_Midland, file=("plot_Midland_ACHE.png"), height = 20, width = 12, dpi=300)
+      
+      GABA_Midland<- ggplot(midlandsdataMOA, aes(x=GABA_receptor, y=distinct_families)) + geom_point() + theme(axis.text.x = element_text(angle = 90)) + ylab("Family richness") + xlab("Concentration (µg/l)") + theme(plot.title = element_text(size = 32, face = "bold", hjust=0.5), axis.title.x = element_text(size = 18, face = "bold"), axis.title.y = element_text(size = 18, face = "bold")) + scale_y_continuous(trans='log10') + scale_x_continuous(trans='log10') + facet_wrap(~SITE_ID)
+      ggsave(GABA_Midland, file=("plot_Midland_GABA.png"), height = 20, width = 12, dpi=300)
